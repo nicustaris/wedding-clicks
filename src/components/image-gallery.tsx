@@ -14,7 +14,7 @@ const ImageGallery: React.FC<Props> = ({ className }) => {
         {images.map((_, index) => (
           <figure key={index} className="relative w-full aspect-square">
             <Image
-              src="http://localhost:3000/eventphoto.jpg"
+              src="/eventphoto.jpg"
               alt="Image"
               className="object-cover object-center"
               fill
