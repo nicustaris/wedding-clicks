@@ -1,7 +1,11 @@
-import ImageGallery from "@/components/ImageGallery";
-import { Button } from "@/components/ui/button";
-import { Camera, UsersRound } from "lucide-react";
 import React from "react";
+
+import ImageGallery from "@/components/image-gallery";
+
+import { Button } from "@/components/ui/button";
+
+import { Camera, UsersRound } from "lucide-react";
+import ImageUploadModal from "@/components/image-upload-modal";
 
 interface Props {
   className?: string;
@@ -25,7 +29,7 @@ const Page = () => {
           <div className="absolute bottom-5">
             <div className="flex flex-col gap-3">
               <div>
-                <Button variant="outline">Upload photo</Button>
+                <ImageUploadModal />
               </div>
               <div className="flex gap-4">
                 <span className="inline-flex items-center gap-1 text-xs">
