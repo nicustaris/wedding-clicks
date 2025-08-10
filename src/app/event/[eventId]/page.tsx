@@ -7,7 +7,7 @@ interface Props {
   className?: string;
 }
 
-const page: React.FC<Props> = ({ className }) => {
+const Page = () => {
   return (
     <div className="w-full">
       <div
@@ -48,4 +48,4 @@ const page: React.FC<Props> = ({ className }) => {
   );
 };
 
-export default page;
+export default Page;
