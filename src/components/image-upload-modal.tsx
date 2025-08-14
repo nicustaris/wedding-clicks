@@ -8,24 +8,59 @@ import {
   DialogTrigger,
   DialogContent,
   DialogTitle,
-  DialogDescription,
-  DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import z from "zod";
+import { useParams } from "next/navigation";
 
 interface Props {
   className?: string;
 }
 
+const imageUploadSchema = z.object({
+  name: z.string().min(2, {
+    message: "Please enter your name",
+  }),
+  message: z.string().optional(),
+  files: z
+    .any()
+    .refine((files) => files?.length > 0, "Please upload at teast one image"),
+});
+
+type imageUploadValues = z.infer<typeof imageUploadSchema>;
+
 const ImageUploadModal: React.FC<Props> = ({ className }) => {
+  const { eventId } = useParams();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    setLoading(true);
+  console.log(eventId);
+
+  const form = useForm({
+    resolver: zodResolver(imageUploadSchema),
+    defaultValues: {
+      name: "",
+      message: "",
+      files: null,
+    },
+  });
+
+  const onSubmit: SubmitHandler<imageUploadValues> = async (data) => {
+    const formData = new FormData();
+
+    if (!eventId || Array.isArray(eventId)) {
+      throw new Error("Missing event id");
+    }
+
+    formData.append("eventId", eventId);
+    formData.append("name", data.name);
+    formData.append("message", data.message || "");
+
+    const filesArray = Array.from(data.files as FileList);
+    filesArray.forEach((file) => formData.append("files", file));
 
     try {
       const res = await fetch("/api/upload", {
@@ -56,10 +91,27 @@ const ImageUploadModal: React.FC<Props> = ({ className }) => {
         )}
       >
         <DialogTitle>Media upload</DialogTitle>
-        <form onSubmit={handleSubmit} className="flex flex-col space-y-2 mt-2">
-          <Input name="name" placeholder="Your name" />
-          <Textarea name="message" placeholder="Message" />
-          <Input type="file" name="files" accept="image/*,video/*" multiple />
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col space-y-2 mt-2"
+        >
+          <Input
+            {...form.register("name")}
+            name="name"
+            placeholder="Your name"
+          />
+          <Textarea
+            {...form.register("message")}
+            name="message"
+            placeholder="Message"
+          />
+          <Input
+            {...form.register("files")}
+            type="file"
+            name="files"
+            accept="image/*,video/*"
+            multiple
+          />
 
           <Button
             type="submit"

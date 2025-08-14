@@ -2,16 +2,10 @@ import React from "react";
 
 import ImageGallery from "@/components/image-gallery";
 
-import { Button } from "@/components/ui/button";
-
 import { Camera, UsersRound } from "lucide-react";
 import ImageUploadModal from "@/components/image-upload-modal";
 
-interface Props {
-  className?: string;
-}
-
-const Page = () => {
+const Page = async () => {
   return (
     <div className="w-full">
       <div

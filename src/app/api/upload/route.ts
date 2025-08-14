@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import BackblazeB2 from "backblaze-b2";
 import { randomUUID } from "crypto";
+import { prisma } from "../../../../prisma/prisma-client";
 
 const b2 = new BackblazeB2({
   applicationKeyId: process.env.B2_KEY_ID!,
@@ -13,10 +14,19 @@ export async function POST(req: NextRequest) {
 
     const formData = await req.formData();
     const files = formData.getAll("files") as File[];
+    const eventIdStr = formData.get("eventId") as string;
+    const name = formData.get("name") as string;
+    const message = formData.get("message") as string | null;
+
+    if (!eventIdStr) {
+      return NextResponse.json({ error: "Missing eventId" }, { status: 400 });
+    }
 
     if (files.length === 0) {
       return NextResponse.json({ error: "No files uploaded" }, { status: 400 });
     }
+
+    const eventId = Number(eventIdStr);
 
     const uploadResults = await Promise.all(
       files.map(async (file) => {
@@ -44,6 +54,15 @@ export async function POST(req: NextRequest) {
           process.env.B2_BUCKET_NAME
         }/${encodeURIComponent(uniqueName)}`;
 
+        await prisma.photo.create({
+          data: {
+            eventId,
+            name,
+            message,
+            imageUrl: publicUrl,
+          },
+        });
+
         return {
           fileName: uniqueName,
           url: publicUrl,
@@ -53,5 +72,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ files: uploadResults });
   } catch (error) {
     console.log("[UPLOAD] Server error");
+    return NextResponse.json({ error });
   }
 }
