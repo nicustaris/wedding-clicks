@@ -37,8 +37,6 @@ const ImageUploadModal: React.FC<Props> = ({ className }) => {
   const { eventId } = useParams();
   const [loading, setLoading] = useState<boolean>(false);
 
-  console.log(eventId);
-
   const form = useForm({
     resolver: zodResolver(imageUploadSchema),
     defaultValues: {
@@ -71,7 +69,6 @@ const ImageUploadModal: React.FC<Props> = ({ className }) => {
       if (!res.ok) throw new Error("upload failed");
 
       const data = await res.json();
-      console.log("data", data);
     } catch (error) {
       console.log(error);
       setLoading(false);
