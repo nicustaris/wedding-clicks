@@ -66,7 +66,12 @@ const ImageUploadModal: React.FC<Props> = ({ className }) => {
         body: formData,
       });
 
-      if (!res.ok) throw new Error("upload failed");
+      const result = await res.json();
+
+      if (!res.ok) {
+        console.error("Server returned error:", result);
+        throw new Error(result.error || "upload failed");
+      }
 
       const data = await res.json();
     } catch (error) {
