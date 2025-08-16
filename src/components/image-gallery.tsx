@@ -10,7 +10,6 @@ interface Props {
 const ImageGallery: React.FC<Props> = async ({ className }) => {
   const images = await prisma.photo.findMany({
     orderBy: { createdAt: "desc" },
-    take: 50,
   });
 
   return (
