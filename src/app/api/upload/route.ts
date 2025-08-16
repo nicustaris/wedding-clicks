@@ -43,18 +43,16 @@ export async function POST(req: NextRequest) {
           : "";
         const uniqueName = `${Date.now()}-${randomUUID()}${extension}`;
 
-        // await b2.uploadFile({
-        //   uploadUrl: uploadData.uploadUrl,
-        //   uploadAuthToken: uploadData.authorizationToken,
-        //   fileName: uniqueName,
-        //   data: buffer,
-        // });
+        await b2.uploadFile({
+          uploadUrl: uploadData.uploadUrl,
+          uploadAuthToken: uploadData.authorizationToken,
+          fileName: uniqueName,
+          data: buffer,
+        });
 
-        // const publicUrl = `https://f003.backblazeb2.com/file/${
-        //   process.env.B2_BUCKET_NAME
-        // }/${encodeURIComponent(uniqueName)}`;
-
-        const publicUrl = "";
+        const publicUrl = `https://f003.backblazeb2.com/file/${
+          process.env.B2_BUCKET_NAME
+        }/${encodeURIComponent(uniqueName)}`;
 
         await prisma.photo.create({
           data: {
