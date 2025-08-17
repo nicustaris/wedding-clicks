@@ -18,6 +18,8 @@ import z from "zod";
 import { useParams } from "next/navigation";
 
 interface Props {
+  open: boolean;
+  onClose: () => void;
   className?: string;
 }
 
@@ -33,7 +35,7 @@ const imageUploadSchema = z.object({
 
 type imageUploadValues = z.infer<typeof imageUploadSchema>;
 
-const ImageUploadModal: React.FC<Props> = ({ className }) => {
+const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
   const { eventId } = useParams();
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -45,6 +47,10 @@ const ImageUploadModal: React.FC<Props> = ({ className }) => {
       files: null,
     },
   });
+
+  const handleClose = () => {
+    onClose();
+  };
 
   const onSubmit: SubmitHandler<imageUploadValues> = async (data) => {
     const formData = new FormData();
@@ -73,19 +79,17 @@ const ImageUploadModal: React.FC<Props> = ({ className }) => {
         throw new Error(result.error || "upload failed");
       }
 
-      const data = await res.json();
+      handleClose();
     } catch (error) {
       console.log(error);
       setLoading(false);
     } finally {
       setLoading(false);
+      handleClose();
     }
   };
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline">Upload photo</Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent
         className={cn(
           "w-full max-w-2xl bg-foreground text-background",

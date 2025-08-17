@@ -1,21 +1,31 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { prisma } from "../../prisma/prisma-client";
+import { Photo } from "@prisma/client";
+import { Api } from "@/services/api-client";
 
 interface Props {
   className?: string;
 }
 
-const ImageGallery: React.FC<Props> = async ({ className }) => {
-  const images = await prisma.photo.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+const WeddingAlbum: React.FC<Props> = ({ className }) => {
+  const [photos, setPhotos] = useState<Photo[]>([]);
+
+  useEffect(() => {
+    async function fetchPhotos() {
+      const data = await Api.photos.getAll();
+      setPhotos(data);
+    }
+
+    fetchPhotos();
+  }, []);
 
   return (
     <section className={cn("bg-white text-background p-1", className)}>
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-10 gap-2">
-        {images.map((photo) => (
+        {photos.map((photo) => (
           <figure key={photo.id} className="relative w-full aspect-square">
             <Image
               src={photo.imageUrl}
@@ -35,4 +45,4 @@ const ImageGallery: React.FC<Props> = async ({ className }) => {
   );
 };
 
-export default ImageGallery;
+export default WeddingAlbum;

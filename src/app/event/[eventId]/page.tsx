@@ -1,9 +1,9 @@
 import React from "react";
 
-import ImageGallery from "@/components/image-gallery";
+import WeddingAlbum from "@/components/wedding-album";
 
 import { Camera, UsersRound } from "lucide-react";
-import ImageUploadModal from "@/components/image-upload-modal";
+import ImageUploadWrapper from "@/components/image-upload-wrapper";
 
 const Page = async () => {
   return (
@@ -20,28 +20,22 @@ const Page = async () => {
             <span className="text-2xl font-allura">Wedding</span>
           </div>
 
-          <div className="absolute bottom-5">
-            <div className="flex flex-col gap-3">
-              <div>
-                <ImageUploadModal />
-              </div>
+          <div className="absolute bottom-6">
+            <div className="flex flex-col gap-4">
+              <ImageUploadWrapper />
               <div className="flex gap-4">
-                <span className="inline-flex items-center gap-1 text-xs">
+                <span className="inline-flex items-center gap-1 text-sm">
                   <Camera size={15} /> 15 photos
                 </span>
-                <span className="inline-flex items-center gap-1 text-xs">
+                <span className="inline-flex items-center gap-1 text-sm">
                   <UsersRound size={15} /> 4 participants
                 </span>
               </div>
-              <span className="text-xs gap-1 inline-flex">
-                <span>1234</span>
-                <span className="text-gray-300">photos collected</span>
-              </span>
             </div>
           </div>
         </div>
       </div>
-      <ImageGallery />
+      <WeddingAlbum />
     </div>
   );
 };
