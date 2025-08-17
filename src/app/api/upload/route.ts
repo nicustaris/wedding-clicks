@@ -69,6 +69,7 @@ export async function POST(req: NextRequest) {
         };
       })
     );
+
     return NextResponse.json({ files: uploadResults });
   } catch (error) {
     console.error("[UPLOAD] Server error:", error);
