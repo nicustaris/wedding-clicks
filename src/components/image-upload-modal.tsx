@@ -2,13 +2,20 @@
 
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
+import { useParams } from "next/navigation";
 
 interface Props {
   open: boolean;
@@ -17,81 +24,71 @@ interface Props {
 }
 
 const imageUploadSchema = z.object({
-  name: z.string().min(2, { message: "Please enter your name" }),
+  name: z.string().min(2, {
+    message: "Please enter your name",
+  }),
   message: z.string().optional(),
   files: z
     .any()
-    .refine(
-      (files) => files?.length > 0,
-      "Please upload at least one file (image or video)"
-    ),
+    .refine((files) => files?.length > 0, "Please upload at teast one image"),
 });
 
 type imageUploadValues = z.infer<typeof imageUploadSchema>;
 
 const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
-  const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState<number>(0);
+  const { eventId } = useParams();
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const form = useForm<imageUploadValues>({
+  const form = useForm({
     resolver: zodResolver(imageUploadSchema),
-    defaultValues: { name: "", message: "", files: null },
+    defaultValues: {
+      name: "",
+      message: "",
+      files: null,
+    },
   });
 
   const handleClose = () => {
-    setProgress(0);
     onClose();
   };
 
   const onSubmit: SubmitHandler<imageUploadValues> = async (data) => {
-    if (!data.files) return;
+    const formData = new FormData();
 
-    setLoading(true);
-    const filesArray = Array.from(data.files as FileList);
-
-    for (const file of filesArray) {
-      try {
-        const res = await fetch("/api/upload");
-        const { uploadUrl, authorizationToken } = await res.json();
-
-        await new Promise<void>((resolve, reject) => {
-          const xhr = new XMLHttpRequest();
-
-          xhr.upload.onprogress = (e) => {
-            if (e.lengthComputable) {
-              setProgress(Math.round((e.loaded / e.total) * 100));
-            }
-          };
-
-          xhr.open("POST", uploadUrl, true);
-          xhr.setRequestHeader("Authorization", authorizationToken);
-          xhr.setRequestHeader("X-Bz-File-Name", encodeURIComponent(file.name));
-          xhr.setRequestHeader("Content-Type", file.type || "b2/x-auto");
-          xhr.setRequestHeader("X-Bz-Content-Sha1", "do_not_verify");
-
-          xhr.onload = () => {
-            if (xhr.status === 200) {
-              console.log("Upload success:", xhr.responseText);
-              resolve();
-            } else {
-              console.error("Upload failed:", xhr.responseText);
-              reject(new Error(xhr.responseText));
-            }
-          };
-
-          xhr.onerror = () => reject(new Error("Upload failed"));
-          xhr.send(file);
-        });
-      } catch (err) {
-        console.error("Upload error:", err);
-      }
+    if (!eventId || Array.isArray(eventId)) {
+      throw new Error("Missing event id");
     }
 
-    setLoading(false);
-    setProgress(0);
-    handleClose();
-  };
+    formData.append("eventId", eventId);
+    formData.append("name", data.name);
+    formData.append("message", data.message || "");
 
+    const filesArray = Array.from(data.files as FileList);
+    filesArray.forEach((file) => formData.append("files", file));
+
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        console.error("Server returned error:", result);
+        throw new Error(result.error || "upload failed");
+      }
+
+      handleClose();
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    } finally {
+      setLoading(false);
+      handleClose();
+      window.location.reload();
+    }
+  };
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent
@@ -101,31 +98,35 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
         )}
       >
         <DialogTitle>Media upload</DialogTitle>
-
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col space-y-2 mt-2"
         >
-          <Input {...form.register("name")} placeholder="Your name" />
-          <Textarea {...form.register("message")} placeholder="Message" />
+          <Input
+            {...form.register("name")}
+            name="name"
+            placeholder="Your name"
+          />
+          <Textarea
+            {...form.register("message")}
+            name="message"
+            placeholder="Message"
+          />
           <Input
             {...form.register("files")}
             type="file"
+            name="files"
             accept="image/*,video/*"
             multiple
           />
 
-          {progress > 0 && (
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div
-                className="bg-blue-500 h-2 rounded-full"
-                style={{ width: `${progress}%` }}
-              ></div>
-            </div>
-          )}
-
-          <Button type="submit" disabled={loading}>
-            {loading ? "Uploading..." : "Upload"}
+          <Button
+            type="submit"
+            variant="default"
+            loading={loading}
+            onClick={() => setLoading(true)}
+          >
+            Upload
           </Button>
         </form>
       </DialogContent>
