@@ -54,12 +54,13 @@ export async function POST(req: NextRequest) {
           process.env.B2_BUCKET_NAME
         }/${encodeURIComponent(uniqueName)}`;
 
-        await prisma.photo.create({
+        await prisma.media.create({
           data: {
             eventId,
             name,
             message,
             imageUrl: publicUrl,
+            mediaType: "photo",
           },
         });
 

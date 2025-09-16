@@ -11,6 +11,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { useParams } from "next/navigation";
+import { Api } from "@/services/api-client";
+import { useMediaStore } from "@/store/media";
 
 interface Props {
   open: boolean;
@@ -33,6 +35,7 @@ type imageUploadValues = z.infer<typeof imageUploadSchema>;
 const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
   const { eventId } = useParams();
   const [loading, setLoading] = useState<boolean>(false);
+  const { fetchMedia } = useMediaStore();
 
   const form = useForm({
     resolver: zodResolver(imageUploadSchema),
@@ -62,26 +65,19 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
     filesArray.forEach((file) => formData.append("files", file));
 
     try {
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
+      const res = await Api.upload.mediaUpload(formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
-      const result = await res.json();
-
-      if (!res.ok) {
-        console.error("Server returned error:", result);
-        throw new Error(result.error || "upload failed");
-      }
-
-      handleClose();
+      await fetchMedia();
     } catch (error) {
       console.log(error);
       setLoading(false);
     } finally {
       setLoading(false);
       handleClose();
-      window.location.reload();
     }
   };
   return (

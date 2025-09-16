@@ -1,3 +1,4 @@
 export enum ApiRoutes {
-  PHOTOS = "/photos",
+  MEDIA = "/media",
+  UPLOAD = "/upload",
 }

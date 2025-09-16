@@ -3,12 +3,13 @@ import { prisma } from "../../../../prisma/prisma-client";
 
 export async function GET() {
   try {
-    const photos = await prisma.photo.findMany({
+    const media = await prisma.media.findMany({
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json(photos);
+    return NextResponse.json(media);
   } catch (error) {
+    console.log("[Server error]", error);
     return NextResponse.error();
   }
 }

@@ -1,5 +1,7 @@
-import * as photos from "./photos";
+import * as media from "./photos";
+import * as upload from "./upload";
 
 export const Api = {
-  photos,
+  media,
+  upload,
 };
