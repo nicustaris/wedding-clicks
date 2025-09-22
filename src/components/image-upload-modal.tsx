@@ -65,7 +65,7 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
     filesArray.forEach((file) => formData.append("files", file));
 
     try {
-      const res = await Api.upload.mediaUpload(formData, {
+      await Api.upload.mediaUpload(formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

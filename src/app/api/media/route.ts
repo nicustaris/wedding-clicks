@@ -3,11 +3,13 @@ import { prisma } from "../../../../prisma/prisma-client";
 
 export async function GET() {
   try {
-    const media = await prisma.media.findMany({
+    const session = await prisma.sessionRecord.findMany({
       orderBy: { createdAt: "desc" },
+      include: {
+        media: true,
+      },
     });
-
-    return NextResponse.json(media);
+    return NextResponse.json(session);
   } catch (error) {
     console.log("[Server error]", error);
     return NextResponse.error();

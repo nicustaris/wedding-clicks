@@ -28,6 +28,13 @@ export async function POST(req: NextRequest) {
 
     const eventId = Number(eventIdStr);
 
+    const session = await prisma.sessionRecord.create({
+      data: {
+        name,
+        message: message || "",
+      },
+    });
+
     const uploadResults = await Promise.all(
       files.map(async (file) => {
         const { data: uploadData } = await b2.getUploadUrl({
@@ -57,8 +64,7 @@ export async function POST(req: NextRequest) {
         await prisma.media.create({
           data: {
             eventId,
-            name,
-            message,
+            sessionId: session.id,
             imageUrl: publicUrl,
             mediaType: "photo",
           },
