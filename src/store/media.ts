@@ -11,7 +11,7 @@ interface MediaStore {
 
 export const useMediaStore = create<MediaStore>((set) => ({
   session: [],
-  loading: false,
+  loading: true,
   error: null,
 
   fetchMedia: async () => {
