@@ -5,13 +5,19 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useMediaStore } from "@/store/media";
 import { Skeleton } from "./ui/skeleton";
+import ImageViewModal from "./image-view-modal";
 interface Props {
   className?: string;
 }
 
 const WeddingAlbum: React.FC<Props> = ({ className }) => {
   const { session, loading, error, fetchMedia } = useMediaStore();
+  const [openImageModal, setOpenImageModal] = useState<boolean>(false);
+  const [selectedSessionId, setSelectedSessionId] = useState<number | null>(
+    null
+  );
 
+  const selectedSession = session.find((s) => s.id === selectedSessionId);
   useEffect(() => {
     fetchMedia();
   }, [fetchMedia]);
@@ -33,7 +39,11 @@ const WeddingAlbum: React.FC<Props> = ({ className }) => {
               return (
                 <figure
                   key={session.id}
-                  className="relative w-full aspect-square"
+                  className="relative w-full aspect-square cursor-pointer"
+                  onClick={() => {
+                    setSelectedSessionId(session.id);
+                    setOpenImageModal(true);
+                  }}
                 >
                   <Image
                     src={firstMedia.imageUrl}
@@ -50,6 +60,15 @@ const WeddingAlbum: React.FC<Props> = ({ className }) => {
               );
             })}
       </div>
+
+      {/* Image View Modal */}
+      {openImageModal && (
+        <ImageViewModal
+          open={openImageModal}
+          onClose={() => setOpenImageModal(false)}
+          session={selectedSession}
+        />
+      )}
     </section>
   );
 };
