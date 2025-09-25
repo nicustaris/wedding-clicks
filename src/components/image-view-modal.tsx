@@ -29,7 +29,7 @@ const ImageViewModal: React.FC<Props> = ({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent
         className={cn(
-          "flex flex-col w-full h-screen max-w-none rounded-none p-4 bg-white text-background overflow-auto",
+          "flex flex-col w-full h-screen max-h-[100dvh] max-w-none rounded-none p-4 bg-white text-background overflow-auto",
           className
         )}
       >
