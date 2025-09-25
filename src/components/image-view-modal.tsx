@@ -26,22 +26,23 @@ const ImageViewModal: React.FC<Props> = ({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent
         className={cn(
-          "fixed w-full h-screen max-w-none rounded-none p-0 bg-white text-background",
+          "fixed w-full h-full max-w-none rounded-none p-0 bg-white text-background",
           className
         )}
       >
-        <DialogTitle>Image title</DialogTitle>
+        <DialogTitle className="absolute top-0 left-0 z-50 p-2 text-black">
+          {/* {session?.message} */}
+        </DialogTitle>
         {session?.media.map((media) => (
           <div className="relative w-full aspect-square">
             <Image
               src={media.imageUrl}
-              alt="qqqqqqqqqqqq"
+              alt={session?.message}
               fill
-              className="object-cover object-center rounded"
+              className="object-contain rounded"
             />
           </div>
         ))}
-        DDDDDD
       </DialogContent>
     </Dialog>
   );
