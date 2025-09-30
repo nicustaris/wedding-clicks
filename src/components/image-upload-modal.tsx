@@ -27,14 +27,13 @@ const imageUploadSchema = z.object({
   message: z.string().optional(),
   files: z
     .any()
-    .refine((files) => files?.length > 0, "Please upload at teast one image"),
+    .refine((files) => files?.length > 0, "Please upload at least one image"),
 });
 
 type imageUploadValues = z.infer<typeof imageUploadSchema>;
 
 const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
   const { eventId } = useParams();
-  const [loading, setLoading] = useState<boolean>(false);
   const { fetchMedia } = useMediaStore();
 
   const form = useForm({
@@ -44,7 +43,14 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
       message: "",
       files: null,
     },
+    mode: "onChange",
   });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting, isValid },
+  } = form;
 
   const handleClose = () => {
     onClose();
@@ -74,9 +80,7 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
       await fetchMedia();
     } catch (error) {
       console.log(error);
-      setLoading(false);
     } finally {
-      setLoading(false);
       handleClose();
     }
   };
@@ -90,32 +94,43 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
       >
         <DialogTitle>Media upload</DialogTitle>
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col space-y-2 mt-2"
         >
-          <Input
-            {...form.register("name")}
-            name="name"
-            placeholder="Your name"
-          />
+          <Input {...register("name")} name="name" placeholder="Your name" />
+          {errors.name && (
+            <span className="text-red-400 text-sm mb-3 ml-1">
+              {errors.name.message}
+            </span>
+          )}
           <Textarea
-            {...form.register("message")}
+            {...register("message")}
             name="message"
             placeholder="Message"
           />
+          {errors.message && (
+            <span className="text-red-400 text-sm mb-3 ml-1">
+              {errors.message?.message}
+            </span>
+          )}
           <Input
-            {...form.register("files")}
+            {...register("files")}
             type="file"
             name="files"
             accept="image/*,video/*"
             multiple
           />
+          {errors.files && (
+            <span className="text-red-400 text-sm mb-3 ml-1">
+              {errors.files.message as string}
+            </span>
+          )}
 
           <Button
             type="submit"
             variant="default"
-            loading={loading}
-            onClick={() => setLoading(true)}
+            loading={isSubmitting}
+            // disabled={!isValid}
           >
             Upload
           </Button>
