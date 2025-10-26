@@ -12,10 +12,10 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { useParams } from "next/navigation";
-import { Api } from "@/services/api-client";
 import { useMediaStore } from "@/store/media";
 import { CloudDownload } from "lucide-react";
 import Image from "next/image";
+import { useUploadThing } from "@/lib/uploadthing";
 
 interface Props {
   open: boolean;
@@ -23,7 +23,7 @@ interface Props {
   className?: string;
 }
 
-const imageUploadSchema = z.object({
+const uploadSchema = z.object({
   name: z.string().min(2, {
     message: "Please enter your name",
   }),
@@ -33,28 +33,17 @@ const imageUploadSchema = z.object({
     .refine((files) => files?.length > 0, "Please upload at least one image"),
 });
 
-type imageUploadValues = z.infer<typeof imageUploadSchema>;
+type uploadValues = z.infer<typeof uploadSchema>;
 
 const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
   const [preview, setPreview] = useState<string[] | []>([]);
+  const [progress, setProgress] = useState<number>(0);
+
   const { eventId } = useParams();
   const { fetchMedia } = useMediaStore();
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: (files) => {
-      setPreview((prev) => [
-        ...prev,
-        ...files.map((file) => URL.createObjectURL(file)),
-      ]);
-      const existingFiles = watch("files") || [];
-      setValue("files", [...existingFiles, ...files], {
-        shouldValidate: true,
-      });
-    },
-    maxFiles: 99,
-  });
 
   const form = useForm({
-    resolver: zodResolver(imageUploadSchema),
+    resolver: zodResolver(uploadSchema),
     defaultValues: {
       name: "",
       message: "",
@@ -69,42 +58,53 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
     formState: { errors, isSubmitting, isValid },
     watch,
     setValue,
+    reset,
   } = form;
 
   const files = watch("files");
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: (currentFiles) => {
+      setPreview((prev) => [
+        ...prev,
+        ...currentFiles.map((file) => URL.createObjectURL(file)),
+      ]);
+      setValue("files", [...files, ...currentFiles], {
+        shouldValidate: true,
+      });
+    },
+    maxFiles: 99,
+  });
+
+  const { startUpload, isUploading } = useUploadThing("mediaUploader", {
+    onClientUploadComplete: () => {
+      reset();
+      setPreview([]);
+      setProgress(0);
+      handleClose();
+    },
+    onUploadProgress: setProgress,
+  });
 
   const handleClose = () => {
     onClose();
   };
 
-  console.log("files", files);
-
-  const onSubmit: SubmitHandler<imageUploadValues> = async (data) => {
-    const formData = new FormData();
-
+  const onSubmit: SubmitHandler<uploadValues> = async (data) => {
     if (!eventId || Array.isArray(eventId)) {
       throw new Error("Missing event id");
     }
 
-    formData.append("eventId", eventId);
-    formData.append("name", data.name);
-    formData.append("message", data.message || "");
-
-    const filesArray = Array.from(data.files as FileList);
-    filesArray.forEach((file) => formData.append("files", file));
-
     try {
-      await Api.upload.mediaUpload(formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      await startUpload(data.files, {
+        name: data.name,
+        message: data.message || "",
+        eventId: Number(eventId),
       });
 
       await fetchMedia();
     } catch (error) {
       console.log(error);
-    } finally {
-      handleClose();
     }
   };
   return (
@@ -148,20 +148,39 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-4 gap-2 overflow-y-auto max-h-60">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 overflow-y-auto max-h-60">
                 {preview.map((u, index) => (
-                  <div key={index} className="w-full aspect-square">
-                    <Image src={u} alt="" width={400} height={400} />
-                  </div>
+                  <figure
+                    key={index}
+                    className="relative w-full h-24 aspect-square cursor-pointer"
+                  >
+                    <Image
+                      src={u}
+                      fill
+                      alt=""
+                      className="object-cover object-center bg-red-500 z-100"
+                    />
+                  </figure>
                 ))}
               </div>
             )}
             <input {...getInputProps()} />
+
             {errors.files && (
               <span className="text-red-400 text-sm mb-3 ml-1">
                 {errors.files.message as string}
               </span>
             )}
+          </div>
+
+          <div className="space-y-2 mt-2">
+            <div className="h-3 bg-gray-200 rounded-full">
+              <div
+                className="h-3 bg-blue-500 rounded-full"
+                style={{ width: `${progress}%` }}
+              ></div>
+            </div>
+            <p className="text-center text-sm">{progress}%</p>
           </div>
 
           <Button

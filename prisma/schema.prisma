@@ -14,18 +14,16 @@ model Event {
     createdAt DateTime @default(now())
     updatedAt DateTime @default(now())
 
-    media Media[]
+    sessions SessionRecord[]
 }
 
 model Media {
     id Int @id @default(autoincrement())
-    eventId Int
     sessionId Int
     imageUrl String
     mediaType String
     createdAt DateTime @default(now())
 
-    event Event @relation(fields: [eventId], references: [id])
     sessionRecord SessionRecord @relation(fields: [sessionId], references: [id])
 }
 
@@ -33,11 +31,11 @@ model SessionRecord {
   id Int @id @default(autoincrement())
   name String
   message String
+  eventId Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
+  event Event @relation(fields: [eventId], references: [id])
   media Media[]
-
-
 }

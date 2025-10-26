@@ -1,8 +1,14 @@
 import type { NextConfig } from "next";
+import { hostname } from "os";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ["f003.backblazeb2.com", "localhost", "127.0.0.1"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*.ufs.sh",
+      },
+    ],
   },
   eslint: {
     ignoreDuringBuilds: true,
