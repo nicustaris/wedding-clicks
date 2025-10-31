@@ -73,7 +73,7 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
 
       currentFiles.forEach((file) => {
         const maxSize = file.type.startsWith("image")
-          ? 1 * 1024 * 1024
+          ? 8 * 1024 * 1024
           : 1 * 1024 * 1024 * 1024;
 
         if (maxSize > file.size) {
