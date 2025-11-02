@@ -6,23 +6,12 @@ export async function GET(request: NextRequest) {
   const eventId = searchParams.get("eventId");
 
   if (!eventId) {
-    return NextResponse.json({ error: "Event ID required", status: 400 });
+    return NextResponse.json({ error: "Event ID is required", status: 400 });
   }
 
   try {
-    // Get all session records.
-    const sessions = await prisma.sessionRecord.findMany({
-      where: {
-        eventId: parseInt(eventId),
-      },
-      orderBy: { createdAt: "desc" },
-      include: {
-        media: true,
-      },
-    });
-
     // Get the total number of participants.
-    const totalParticipants = await prisma.sessionRecord.findMany({
+    const uniqueParticipants = await prisma.sessionRecord.findMany({
       where: {
         eventId: parseInt(eventId),
         media: {
@@ -40,13 +29,12 @@ export async function GET(request: NextRequest) {
         },
       },
     });
+
     return NextResponse.json({
-      sessions,
-      totalParticipants: totalParticipants.length,
-      totalMedia,
+      participantsCount: uniqueParticipants.length,
+      mediaCount: totalMedia,
     });
   } catch (error) {
-    console.log("[Server error]", error);
-    return NextResponse.error();
+    console.log(error);
   }
 }

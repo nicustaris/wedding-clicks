@@ -1,11 +1,17 @@
+export const dynamic = "force-dynamic";
+
 import React from "react";
 
-import WeddingAlbum from "@/components/wedding-album";
+import { EventStats } from "@/components/event-stats";
+import { WeddingAlbum } from "@/components/wedding-album";
 
-import { Camera, UsersRound } from "lucide-react";
-import ImageUploadWrapper from "@/components/image-upload-wrapper";
+interface PageParams {
+  params: Promise<{ eventId: string }>;
+}
 
-const Page = async () => {
+const Page = async ({ params }: PageParams) => {
+  const { eventId } = await params;
+
   return (
     <div className="w-full">
       <div
@@ -19,23 +25,10 @@ const Page = async () => {
             <h1 className="text-2xl italic font-allura">Nicu & Doina</h1>
             <span className="text-2xl font-allura">Wedding</span>
           </div>
-
-          <div className="absolute bottom-6">
-            <div className="flex flex-col gap-4">
-              <ImageUploadWrapper />
-              <div className="flex gap-4">
-                <span className="inline-flex items-center gap-1 text-sm">
-                  <Camera size={15} /> 15 photos
-                </span>
-                <span className="inline-flex items-center gap-1 text-sm">
-                  <UsersRound size={15} /> 4 participants
-                </span>
-              </div>
-            </div>
-          </div>
+          <EventStats />
         </div>
       </div>
-      <WeddingAlbum />
+      <WeddingAlbum eventId={Number(eventId)} />
     </div>
   );
 };

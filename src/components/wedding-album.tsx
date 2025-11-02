@@ -7,20 +7,25 @@ import { useMediaStore } from "@/store/media";
 import { Skeleton } from "./ui/skeleton";
 import ImageViewModal from "./image-view-modal";
 interface Props {
+  eventId: number;
   className?: string;
 }
 
-const WeddingAlbum: React.FC<Props> = ({ className }) => {
-  const { session, loading, error, fetchMedia } = useMediaStore();
+export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
+  const { sessions, loading, setEventId, fetchMedia, error } = useMediaStore();
   const [openImageModal, setOpenImageModal] = useState<boolean>(false);
   const [selectedSessionId, setSelectedSessionId] = useState<number | null>(
     null
   );
 
-  const selectedSession = session.find((s) => s.id === selectedSessionId);
   useEffect(() => {
+    setEventId(eventId);
     fetchMedia();
-  }, [fetchMedia]);
+  }, [eventId]);
+
+  const selectedSession = selectedSessionId
+    ? sessions.find((s) => s.id === selectedSessionId)
+    : null;
 
   return (
     <section className={cn("bg-white text-background p-1", className)}>
@@ -32,7 +37,7 @@ const WeddingAlbum: React.FC<Props> = ({ className }) => {
                 className="w-full h-full aspect-square bg-gray-200 mt-0.5"
               />
             ))
-          : session.map((session) => {
+          : sessions.map((session) => {
               const firstMedia = session.media[0];
 
               if (!firstMedia) return null;
@@ -61,16 +66,14 @@ const WeddingAlbum: React.FC<Props> = ({ className }) => {
             })}
       </div>
 
-      {/* Image View Modal */}
+      {/* Image view modal */}
       {openImageModal && (
         <ImageViewModal
           open={openImageModal}
           onClose={() => setOpenImageModal(false)}
-          session={selectedSession}
+          session={selectedSession!}
         />
       )}
     </section>
   );
 };
-
-export default WeddingAlbum;

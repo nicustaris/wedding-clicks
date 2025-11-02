@@ -46,10 +46,9 @@ const ImageViewModal: React.FC<Props> = ({
             className="object-contain rounded"
           />
         </div>
-
         {/* Thumbnails */}
         <div className="flex gap-2 overflow-x-auto px-2">
-          {session.media.length > 1 &&
+          {session.media.length > 0 &&
             session.media.map((media, index) => (
               <div
                 key={media.id}
