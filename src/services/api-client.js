@@ -1,4 +1,4 @@
-import * as media from "./photos";
+import * as media from "./media";
 import * as upload from "./upload";
 
 export const Api = {

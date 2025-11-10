@@ -1,52 +1,44 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../prisma/prisma-client";
 
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
   const eventId = searchParams.get("eventId");
 
   if (!eventId) {
-    return NextResponse.json({ error: "Event ID required", status: 400 });
+    return NextResponse.json({ error: "Event ID is required", status: 400 });
   }
 
   try {
-    // Get all session records.
-    const sessions = await prisma.sessionRecord.findMany({
+    const media = await prisma.media.findMany({
       where: {
-        eventId: parseInt(eventId),
+        sessionRecord: {
+          eventId: Number(eventId),
+        },
       },
-      orderBy: { createdAt: "desc" },
-      include: {
-        media: true,
+      select: {
+        id: true,
+        sessionId: true,
+        imageUrl: true,
+        mediaType: true,
       },
     });
 
-    // Get the total number of participants.
     const totalParticipants = await prisma.sessionRecord.findMany({
       where: {
-        eventId: parseInt(eventId),
-        media: {
-          some: {},
-        },
+        eventId: Number(eventId),
+      },
+      include: {
+        media: true,
       },
       distinct: ["name"],
     });
 
-    // Get total media count from Media table.
-    const totalMedia = await prisma.media.count({
-      where: {
-        sessionRecord: {
-          eventId: parseInt(eventId),
-        },
-      },
-    });
     return NextResponse.json({
-      sessions,
+      media,
       totalParticipants: totalParticipants.length,
-      totalMedia,
     });
   } catch (error) {
-    console.log("[Server error]", error);
-    return NextResponse.error();
+    return NextResponse.json({ error: "Failed to fetch media", status: 400 });
   }
 }

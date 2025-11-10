@@ -1,40 +1,34 @@
 import { Api } from "@/services/api-client";
 import { create } from "zustand";
 import { SessionWithMedia } from "../../@types/prisma";
+import { Media } from "../../@types/media";
 
 interface MediaStore {
-  eventId: number | null;
-  sessions: SessionWithMedia[];
+  media: Media[];
   totalParticipants: number;
   totalMedia: number;
   loading: boolean;
   error: string | null;
-  setEventId: (id: number) => void;
-  fetchMedia: () => Promise<void>;
+  fetchMedia: (eventId: number) => Promise<void>;
 }
 
 export const useMediaStore = create<MediaStore>((set, get) => ({
-  eventId: null,
-  sessions: [],
+  media: [],
   totalParticipants: 0,
   totalMedia: 0,
   loading: true,
   error: null,
 
-  setEventId: (id: number) => set({ eventId: id }),
-
-  fetchMedia: async () => {
-    const { eventId } = get();
-    if (!eventId) return;
+  fetchMedia: async (eventId: number) => {
     try {
       set({ loading: true, error: null });
 
       const data = await Api.media.getAll(eventId);
-      console.log("store event id>>>>>", eventId);
+      console.log(data);
       set({
-        sessions: data.sessions ?? [],
+        media: data.media ?? [],
+        totalMedia: data.media.length,
         totalParticipants: data.totalParticipants,
-        totalMedia: data.totalMedia,
         loading: false,
         error: null,
       });
