@@ -14,15 +14,24 @@ interface Props {
 export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
   const { media, loading, fetchMedia, error } = useMediaStore();
   const [openImageModal, setOpenImageModal] = useState<boolean>(false);
-  const [selectedMediaId, setSelectedMediaId] = useState<number | null>(null);
+  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
+  const [direction, setDirection] = useState<"left" | "right">("right");
 
   useEffect(() => {
     fetchMedia(eventId);
   }, [eventId]);
 
-  const selectedMedia = selectedMediaId
-    ? media.find((s) => s.id === selectedMediaId)
-    : null;
+  const handlePrev = () => {
+    setCurrentIndex((prev) =>
+      prev !== null ? (prev - 1 + media.length) % media.length : 0
+    );
+    setDirection("left");
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev !== null ? (prev + 1) % media.length : 0));
+    setDirection("right");
+  };
 
   return (
     <section className={cn("bg-white text-background p-1", className)}>
@@ -31,15 +40,15 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
           ? Array.from({ length: 12 }, (_, i) => (
               <Skeleton
                 key={i}
-                className="w-full h-full aspect-square bg-gray-200 mt-0.5"
+                className="w-full h-full aspect-square bg-gray-200 mt-0.5 animate-pulse"
               />
             ))
-          : media.map((item) => (
+          : media.map((item, index) => (
               <figure
                 key={item.id}
                 className="relative w-full aspect-square cursor-pointer"
                 onClick={() => {
-                  setSelectedMediaId(item.id);
+                  setCurrentIndex(index);
                   setOpenImageModal(true);
                 }}
               >
@@ -60,11 +69,14 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
       </div>
 
       {/* View image modal */}
-      {openImageModal && selectedMediaId && (
+      {openImageModal && currentIndex !== null && (
         <ImageViewModal
           open={openImageModal}
           onClose={() => setOpenImageModal(false)}
-          selectedMedia={selectedMedia!}
+          selectedMedia={media[currentIndex]}
+          onPrev={handlePrev}
+          onNext={handleNext}
+          direction={direction}
         />
       )}
     </section>

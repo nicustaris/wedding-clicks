@@ -24,7 +24,6 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
       set({ loading: true, error: null });
 
       const data = await Api.media.getAll(eventId);
-      console.log(data);
       set({
         media: data.media ?? [],
         totalMedia: data.media.length,
