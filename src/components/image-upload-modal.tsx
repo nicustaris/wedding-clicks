@@ -138,8 +138,9 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
         message: data.message || "",
         eventId: Number(eventId),
       });
-
-      await fetchMedia();
+      // TODO: Update the state after upload
+      //
+      //
     } catch (error) {
       console.log(error);
     }
