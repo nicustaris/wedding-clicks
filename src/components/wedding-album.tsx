@@ -15,7 +15,6 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
   const { media, loading, fetchMedia, error } = useMediaStore();
   const [openImageModal, setOpenImageModal] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
-  const [direction, setDirection] = useState<"left" | "right">("right");
 
   useEffect(() => {
     fetchMedia(eventId);
@@ -25,12 +24,10 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
     setCurrentIndex((prev) =>
       prev !== null ? (prev - 1 + media.length) % media.length : 0
     );
-    setDirection("left");
   };
 
   const handleNext = () => {
     setCurrentIndex((prev) => (prev !== null ? (prev + 1) % media.length : 0));
-    setDirection("right");
   };
 
   return (
@@ -76,7 +73,6 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
           selectedMedia={media[currentIndex]}
           onPrev={handlePrev}
           onNext={handleNext}
-          direction={direction}
         />
       )}
     </section>

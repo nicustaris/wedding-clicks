@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
 import Image from "next/image";
 import { Media } from "../../@types/media";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, easeInOut } from "framer-motion";
 
 interface Props {
   open: boolean;
@@ -12,7 +12,6 @@ interface Props {
   onPrev: () => void;
   onNext: () => void;
   onClose: () => void;
-  direction: "left" | "right";
   className?: string;
 }
 
@@ -22,13 +21,36 @@ const ImageViewModal: React.FC<Props> = ({
   onPrev,
   onNext,
   onClose,
-  direction,
   className,
 }) => {
   if (!selectedMedia) return null;
 
+  const [direction, setDirection] = useState(0);
+
+  const handleNext = () => {
+    setDirection(1);
+    onNext();
+  };
+
+  const handlePrev = () => {
+    setDirection(-1);
+    onPrev();
+  };
+
   const handleClose = () => {
     onClose();
+  };
+
+  const slideVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 300 : -300,
+    }),
+    center: {
+      x: 0,
+    },
+    exit: (direction: number) => ({
+      x: direction > 0 ? -300 : 300,
+    }),
   };
 
   return (
@@ -45,27 +67,33 @@ const ImageViewModal: React.FC<Props> = ({
 
         {/* Main Image */}
         <div className="relative flex-1 w-full max-w-3xl mx-auto mb-4">
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait" custom={direction}>
             <motion.div
-              key={selectedMedia.id}
-              initial={{ x: direction === "right" ? 300 : -300, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: direction === "right" ? -300 : 300, opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              key={selectedMedia.imageUrl}
+              variants={slideVariants}
+              custom={direction}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.15, ease: "easeInOut" }}
               className="relative w-full h-full"
             >
               <Image
                 src={selectedMedia.imageUrl}
                 alt={selectedMedia.mediaType}
                 fill
-                className="object-contain rounded"
+                className="w-full h-full object-contain rounded"
               />
             </motion.div>
           </AnimatePresence>
+
           <div className="flex items-center justify-between absolute inset-0 px-1">
-            <FaChevronLeft onClick={onPrev} className="size-10 text-gray-400" />
+            <FaChevronLeft
+              onClick={handlePrev}
+              className="size-10 text-gray-400"
+            />
             <FaChevronRight
-              onClick={onNext}
+              onClick={handleNext}
               className="size-10 text-gray-400"
             />
           </div>
