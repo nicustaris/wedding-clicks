@@ -43,13 +43,13 @@ const ImageViewModal: React.FC<Props> = ({
 
   const slideVariants = {
     enter: (direction: number) => ({
-      x: direction > 0 ? 300 : -300,
+      x: direction > 0 ? 10 : -10,
     }),
     center: {
       x: 0,
     },
     exit: (direction: number) => ({
-      x: direction > 0 ? -300 : 300,
+      x: direction > 0 ? -10 : 10,
     }),
   };
 
@@ -78,12 +78,15 @@ const ImageViewModal: React.FC<Props> = ({
               transition={{ duration: 0.15, ease: "easeInOut" }}
               className="relative w-full h-full"
             >
-              <Image
-                src={selectedMedia.imageUrl}
-                alt={selectedMedia.mediaType}
-                fill
-                className="w-full h-full object-contain rounded"
-              />
+              <div className="relative w-full h-full">
+                <Image
+                  src={selectedMedia.imageUrl}
+                  alt={selectedMedia.mediaType}
+                  fill
+                  className="object-contain rounded"
+                  priority // ✅ optional, loads faster
+                />
+              </div>
             </motion.div>
           </AnimatePresence>
 
