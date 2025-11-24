@@ -43,11 +43,13 @@ const ImageViewModal: React.FC<Props> = ({
 
   const slideVariants = {
     enter: (direction: number) => ({
-      x: direction > 0 ? "100%" : "-100%",
+      x: direction > 0 ? 300 : -300,
+      opacity: 0,
     }),
-    center: { x: 0 },
+    center: { x: 0, opacity: 1 },
     exit: (direction: number) => ({
-      x: direction > 0 ? "-100%" : "100%",
+      x: direction > 0 ? -300 : 300,
+      opacity: 0,
     }),
   };
 
@@ -55,7 +57,7 @@ const ImageViewModal: React.FC<Props> = ({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent
         className={cn(
-          "flex flex-col w-full h-screen max-h-dvh max-w-none rounded-none p-4 text-background overflow-auto bg-black/40",
+          "flex flex-col w-full h-screen max-h-dvh max-w-none rounded-none p-4 text-background overflow-auto bg-black/40 overflow-x-hidden",
           className
         )}
       >
@@ -64,7 +66,7 @@ const ImageViewModal: React.FC<Props> = ({
         </DialogTitle>
 
         {/* Main Image */}
-        <div className="relative flex-1 w-full max-w-3xl mx-auto mb-4">
+        <div className="relative w-full h-[80vh] overflow-hidden mx-auto">
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
               key={selectedMedia.imageUrl}
@@ -80,8 +82,8 @@ const ImageViewModal: React.FC<Props> = ({
                 src={selectedMedia.imageUrl}
                 alt={selectedMedia.mediaType}
                 fill
+                sizes="100vw"
                 className="object-contain rounded"
-                priority
               />
             </motion.div>
           </AnimatePresence>
