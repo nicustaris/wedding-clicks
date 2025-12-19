@@ -6,6 +6,10 @@ import Image from "next/image";
 import { useMediaStore } from "@/store/media";
 import { Skeleton } from "./ui/skeleton";
 import ImageViewModal from "./image-view-modal";
+import { RiGalleryView2 } from "react-icons/ri";
+import { FaVideo } from "react-icons/fa6";
+import { FaRegHeart } from "react-icons/fa";
+
 interface Props {
   eventId: number;
   className?: string;
@@ -15,6 +19,9 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
   const { media, loading, fetchMedia, error } = useMediaStore();
   const [openImageModal, setOpenImageModal] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<
+    "gallery" | "videos" | "favorites"
+  >("gallery");
 
   useEffect(() => {
     fetchMedia(eventId);
@@ -30,9 +37,53 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
     setCurrentIndex((prev) => (prev !== null ? (prev + 1) % media.length : 0));
   };
 
+  const tabs = [
+    {
+      id: "gallery",
+      icon: <RiGalleryView2 size={25} />,
+    },
+    {
+      id: "videos",
+      icon: <FaVideo size={25} />,
+    },
+    {
+      id: "favorites",
+      icon: <FaRegHeart size={25} />,
+    },
+  ] as const;
+
   return (
-    <section className={cn("bg-white text-background p-1", className)}>
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-10 gap-1">
+    <section className={cn("bg-white text-background p-1.5", className)}>
+      <div className="flex justify-evenly p-2 border-b border-gray-200">
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className="flex relative flex-col items-center p-3"
+            >
+              {/* Icon */}
+              <span>
+                {React.cloneElement(tab.icon, {
+                  className: cn(
+                    isActive ? "text-secondary" : "text-gray-600",
+                    "transition-all"
+                  ),
+                })}
+              </span>
+
+              <span
+                className={cn(
+                  "absolute bottom-0 h-0.5 w-16 rounded-full bg-primary transition-all",
+                  isActive ? "bg-secondary" : "bg-transparent"
+                )}
+              ></span>
+            </button>
+          );
+        })}
+      </div>
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-10 gap-1.5 mt-3">
         {loading
           ? Array.from({ length: 12 }, (_, i) => (
               <Skeleton
@@ -52,7 +103,7 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
                 <Image
                   src={item.imageUrl}
                   alt={item.mediaType || "Image"}
-                  className="object-cover object-center rounded"
+                  className="object-cover object-center rounded-md"
                   fill
                   unoptimized
                 />
@@ -64,7 +115,6 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
               </figure>
             ))}
       </div>
-
       {/* View image modal */}
       {openImageModal && currentIndex !== null && (
         <ImageViewModal
