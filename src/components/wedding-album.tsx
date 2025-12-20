@@ -6,9 +6,11 @@ import Image from "next/image";
 import { useMediaStore } from "@/store/media";
 import { Skeleton } from "./ui/skeleton";
 import ImageViewModal from "./image-view-modal";
+
+// React icons
 import { RiGalleryView2 } from "react-icons/ri";
 import { FaVideo } from "react-icons/fa6";
-import { FaRegHeart } from "react-icons/fa";
+import { GoHeartFill } from "react-icons/go";
 
 interface Props {
   eventId: number;
@@ -26,6 +28,8 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
   useEffect(() => {
     fetchMedia(eventId);
   }, [eventId]);
+
+  console.log("media", media);
 
   const handlePrev = () => {
     setCurrentIndex((prev) =>
@@ -48,7 +52,7 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
     },
     {
       id: "favorites",
-      icon: <FaRegHeart size={25} />,
+      icon: <GoHeartFill size={25} />,
     },
   ] as const;
 
@@ -94,7 +98,7 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
           : media.map((item, index) => (
               <figure
                 key={item.id}
-                className="relative w-full aspect-square cursor-pointer"
+                className="flex relative w-full aspect-square cursor-pointer"
                 onClick={() => {
                   setCurrentIndex(index);
                   setOpenImageModal(true);
@@ -107,6 +111,15 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
                   fill
                   unoptimized
                 />
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    console.log(item);
+                  }}
+                  className="absolute top-0 right-0 p-2 z-99"
+                >
+                  <GoHeartFill size={20} className="text-gray-100" />
+                </span>
                 <figcaption className="w-full absolute bottom-0 right-0 bg-gray-500/45 text-end">
                   <span className="text-foreground text-[10px] px-2 md:text-[14px]">
                     {item.mediaType}
@@ -115,6 +128,7 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
               </figure>
             ))}
       </div>
+
       {/* View image modal */}
       {openImageModal && currentIndex !== null && (
         <ImageViewModal

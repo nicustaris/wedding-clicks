@@ -22,6 +22,9 @@ export async function GET(req: NextRequest) {
         imageUrl: true,
         mediaType: true,
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     const totalParticipants = await prisma.sessionRecord.findMany({
