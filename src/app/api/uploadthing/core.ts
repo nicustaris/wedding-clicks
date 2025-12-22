@@ -36,6 +36,7 @@ export const ourFileRouter = {
       }
     })
     .onUploadComplete(async ({ file, metadata }) => {
+      // TODO: In the future upload thumbnail for photos to optimise UI
       const media = await prisma.media.create({
         data: {
           sessionId: metadata.sessionId,
