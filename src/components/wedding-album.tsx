@@ -109,8 +109,8 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
                     <video
                       playsInline
                       controls
-                      src={item.imageUrl}
-                      poster={item.imageUrl}
+                      preload="metadata"
+                      src={`${item.imageUrl}#t=0.1`}
                       className="w-full h-full object-cover rounded-sm overflow-y-hidden"
                     />
                   </>

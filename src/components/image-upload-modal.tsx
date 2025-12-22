@@ -196,6 +196,8 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
                   >
                     {item.type.startsWith("video/") ? (
                       <video
+                        playsInline
+                        controls
                         src={item.url}
                         poster={item.url}
                         className="w-full h-24 object-cover"
