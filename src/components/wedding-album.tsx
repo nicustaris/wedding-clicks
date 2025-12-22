@@ -110,7 +110,7 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
                       playsInline
                       muted
                       src={item.imageUrl}
-                      className="w-full object-cover object-center rounded-sm pointer-events-none"
+                      className="w-full h-full object-cover rounded-sm"
                     />
                   </>
                 ) : (
@@ -120,7 +120,6 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
                       alt={item.mediaType || "Image"}
                       className="w-full object-cover object-center rounded-md"
                       fill
-                      unoptimized
                     />
                   </>
                 )}
@@ -130,7 +129,7 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
                     e.stopPropagation();
                     toggleFavorite(item.id);
                   }}
-                  className="absolute top-0 right-0 p-2"
+                  className="absolute top-0 right-0 p-1.5"
                 >
                   <GoHeartFill
                     size={20}
