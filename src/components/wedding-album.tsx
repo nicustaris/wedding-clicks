@@ -108,7 +108,7 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
                   <>
                     <video
                       playsInline
-                      muted
+                      controls
                       src={item.imageUrl}
                       poster={item.imageUrl}
                       className="w-full h-full object-cover rounded-sm overflow-y-hidden"
