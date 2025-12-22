@@ -194,17 +194,18 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
                     key={index}
                     className="relative w-full h-24 aspect-square cursor-pointer"
                   >
-                    {item.type.startsWith("image") ? (
+                    {item.type.startsWith("video/") ? (
+                      <video
+                        src={item.url}
+                        poster={item.url}
+                        className="w-full h-24 object-cover"
+                      />
+                    ) : (
                       <Image
                         src={item.url}
                         fill
                         alt=""
                         className="object-cover object-center rounded"
-                      />
-                    ) : (
-                      <video
-                        src={item.url}
-                        className="w-full h-24 object-cover"
                       />
                     )}
                   </figure>
