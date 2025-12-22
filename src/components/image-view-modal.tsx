@@ -69,33 +69,45 @@ const ImageViewModal: React.FC<Props> = ({
         <div className="relative w-full h-[80vh] overflow-hidden mx-auto">
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
-              key={selectedMedia.imageUrl}
               variants={slideVariants}
               custom={direction}
               initial="enter"
               animate="center"
               exit="exit"
               transition={{ duration: 0.2, ease: "easeInOut" }}
-              className="relative w-full h-full"
+              // className="relative w-full h-full"
             >
-              <Image
-                src={selectedMedia.imageUrl}
-                alt={selectedMedia.mediaType}
-                fill
-                sizes="100vw"
-                className="object-contain rounded"
-              />
+              {" "}
+              *
+              {selectedMedia.mediaType.startsWith("video/") ? (
+                <video
+                  src={selectedMedia.imageUrl}
+                  controls
+                  autoPlay
+                  playsInline
+                />
+              ) : (
+                <Image
+                  src={selectedMedia.imageUrl}
+                  alt={selectedMedia.mediaType}
+                  fill
+                  sizes="100vw"
+                  className="object-contain rounded"
+                />
+              )}
             </motion.div>
           </AnimatePresence>
 
-          <div className="flex items-center justify-between absolute inset-0 px-1">
+          <div className="absolute left-4 top-1/2 -translate-x-1/2 flex items-center px-2 pointer-events-auto">
             <FaChevronLeft
               onClick={handlePrev}
-              className="size-10 text-gray-400"
+              className="size-10 text-gray-400 cursor-pointer"
             />
+          </div>
+          <div className="absolute right-0 top-1/2 -translate-x-1/2 flex items-center px-2 pointer-events-auto">
             <FaChevronRight
               onClick={handleNext}
-              className="size-10 text-gray-400"
+              className="size-10 text-gray-400 cursor-pointer"
             />
           </div>
         </div>

@@ -11,6 +11,7 @@ import ImageViewModal from "./image-view-modal";
 import { RiGalleryView2 } from "react-icons/ri";
 import { FaVideo } from "react-icons/fa6";
 import { GoHeartFill } from "react-icons/go";
+import { useFavorites } from "@/hooks/useFavorites";
 
 interface Props {
   eventId: number;
@@ -19,6 +20,7 @@ interface Props {
 
 export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
   const { media, loading, fetchMedia, error } = useMediaStore();
+  const { favorites, toggleFavorite, isFavorite } = useFavorites(eventId);
   const [openImageModal, setOpenImageModal] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<
@@ -28,8 +30,6 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
   useEffect(() => {
     fetchMedia(eventId);
   }, [eventId]);
-
-  console.log("media", media);
 
   const handlePrev = () => {
     setCurrentIndex((prev) =>
@@ -104,22 +104,43 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
                   setOpenImageModal(true);
                 }}
               >
-                <Image
-                  src={item.imageUrl}
-                  alt={item.mediaType || "Image"}
-                  className="object-cover object-center rounded-md"
-                  fill
-                  unoptimized
-                />
+                {item.mediaType.startsWith("video/") ? (
+                  <>
+                    <video
+                      playsInline
+                      muted
+                      src={item.imageUrl}
+                      className="w-full object-cover object-center rounded-sm pointer-events-none"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <Image
+                      src={item.imageUrl}
+                      alt={item.mediaType || "Image"}
+                      className="w-full object-cover object-center rounded-md"
+                      fill
+                      unoptimized
+                    />
+                  </>
+                )}
+
                 <span
                   onClick={(e) => {
                     e.stopPropagation();
-                    console.log(item);
+                    toggleFavorite(item.id);
                   }}
-                  className="absolute top-0 right-0 p-2 z-99"
+                  className="absolute top-0 right-0 p-2"
                 >
-                  <GoHeartFill size={20} className="text-gray-100" />
+                  <GoHeartFill
+                    size={20}
+                    className={cn(
+                      "transition-all duration-300",
+                      isFavorite(item.id) ? "text-red-500" : "text-gray-100"
+                    )}
+                  />
                 </span>
+
                 <figcaption className="w-full absolute bottom-0 right-0 bg-gray-500/45 text-end">
                   <span className="text-foreground text-[10px] px-2 md:text-[14px]">
                     {item.mediaType}
