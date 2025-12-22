@@ -110,7 +110,7 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
                       playsInline
                       muted
                       src={item.imageUrl}
-                      className="w-full h-full object-cover rounded-sm"
+                      className="w-full h-full object-cover rounded-sm overflow-y-hidden"
                     />
                   </>
                 ) : (
