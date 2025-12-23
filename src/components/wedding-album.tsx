@@ -176,7 +176,7 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
         <ImageViewModal
           open={openImageModal}
           onClose={() => setOpenImageModal(false)}
-          selectedMedia={media[currentIndex]}
+          selectedMedia={filteredMedia[currentIndex]}
           onPrev={handlePrev}
           onNext={handleNext}
         />
