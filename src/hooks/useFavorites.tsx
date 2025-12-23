@@ -34,7 +34,6 @@ export function useFavorites(eventId: number) {
   const isFavorite = (mediaId: number) => favorites.includes(mediaId);
 
   return {
-    favorites,
     toggleFavorite,
     isFavorite,
   };

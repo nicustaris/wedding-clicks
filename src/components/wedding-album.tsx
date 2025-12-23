@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { act, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useMediaStore } from "@/store/media";
@@ -20,7 +20,7 @@ interface Props {
 
 export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
   const { media, loading, fetchMedia, error } = useMediaStore();
-  const { favorites, toggleFavorite, isFavorite } = useFavorites(eventId);
+  const { toggleFavorite, isFavorite } = useFavorites(eventId);
   const [openImageModal, setOpenImageModal] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<
@@ -33,12 +33,16 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
 
   const handlePrev = () => {
     setCurrentIndex((prev) =>
-      prev !== null ? (prev - 1 + media.length) % media.length : 0
+      prev !== null
+        ? (prev - 1 + filteredMedia.length) % filteredMedia.length
+        : 0
     );
   };
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev !== null ? (prev + 1) % media.length : 0));
+    setCurrentIndex((prev) =>
+      prev !== null ? (prev + 1) % filteredMedia.length : 0
+    );
   };
 
   const tabs = [
@@ -66,6 +70,12 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
         return true;
     }
   });
+
+  const emptyMessages = {
+    gallery: "Photos will appear here once they’re uploaded 📸",
+    videos: "No videos yet — check back soon 🎥",
+    favorites: "You haven’t added any favorites yet ❤️",
+  };
 
   return (
     <section className={cn("bg-white text-background p-1.5", className)}>
@@ -99,76 +109,84 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
         })}
       </div>
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-10 gap-1.5 mt-3">
-        {loading
-          ? Array.from({ length: 12 }, (_, i) => (
-              <Skeleton
-                key={i}
-                className="w-full h-full aspect-square bg-gray-200 mt-0.5 animate-pulse"
-              />
-            ))
-          : filteredMedia.map((item, index) => (
-              <figure
-                key={item.id}
-                className="flex relative w-full aspect-square cursor-pointer"
-                onClick={() => {
-                  setCurrentIndex(index);
-                  setOpenImageModal(true);
-                }}
-              >
-                {item.mediaType.startsWith("video/") ? (
-                  <div className="flex relative w-full h-full cursor-pointer">
-                    <video
-                      preload="metadata"
-                      src={`${item.imageUrl}#t=0.001`}
-                      className="w-full h-full object-cover rounded-sm overflow-y-hidden pointer-events-none"
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="bg-black/50 rounded-full p-2">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-6 w-6 text-white"
-                          fill="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path d="M8 5v14l11-7z" />
-                        </svg>
-                      </div>
+        {loading ? (
+          Array.from({ length: 12 }, (_, i) => (
+            <Skeleton
+              key={i}
+              className="w-full h-full aspect-square bg-gray-200 mt-0.5 animate-pulse"
+            />
+          ))
+        ) : filteredMedia.length === 0 ? (
+          <div className="col-span-full flex w-full h-[60vh] justify-center items-center p-6">
+            <span className="text-base sm:text-lg text-center text-gray-600">
+              {emptyMessages[activeTab]}
+            </span>
+          </div>
+        ) : (
+          filteredMedia.map((item, index) => (
+            <figure
+              key={item.id}
+              className="flex relative w-full aspect-square cursor-pointer"
+              onClick={() => {
+                setCurrentIndex(index);
+                setOpenImageModal(true);
+              }}
+            >
+              {item.mediaType.startsWith("video/") ? (
+                <div className="flex relative w-full h-full cursor-pointer">
+                  <video
+                    preload="metadata"
+                    src={`${item.imageUrl}#t=0.001`}
+                    className="w-full h-full object-cover rounded-sm overflow-y-hidden pointer-events-none"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="bg-black/50 rounded-full p-2">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6 text-white"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
                     </div>
                   </div>
-                ) : (
-                  <>
-                    <Image
-                      src={item.imageUrl}
-                      alt={item.mediaType || "Image"}
-                      className="w-full object-cover object-center rounded-md"
-                      fill
-                    />
-                  </>
-                )}
-
-                <span
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleFavorite(item.id);
-                  }}
-                  className="absolute top-0 right-0 p-1.5"
-                >
-                  <GoHeartFill
-                    size={22}
-                    className={cn(
-                      "transition-all duration-300",
-                      isFavorite(item.id) ? "text-red-500" : "text-white/90"
-                    )}
+                </div>
+              ) : (
+                <>
+                  <Image
+                    src={item.imageUrl}
+                    alt={item.mediaType || "Image"}
+                    className="w-full object-cover object-center rounded-md"
+                    fill
                   />
-                </span>
+                </>
+              )}
 
-                <figcaption className="w-full absolute bottom-0 right-0 bg-gray-500/45 text-end">
-                  <span className="text-foreground text-[10px] px-2 md:text-[14px]">
-                    {item.mediaType}
-                  </span>
-                </figcaption>
-              </figure>
-            ))}
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleFavorite(item.id);
+                }}
+                className="absolute top-0 right-0 p-1.5"
+              >
+                <GoHeartFill
+                  size={22}
+                  className={cn(
+                    "transition-all duration-300",
+                    isFavorite(item.id) ? "text-red-500" : "text-white/90"
+                  )}
+                />
+              </span>
+
+              <figcaption className="w-full absolute bottom-0 right-0 bg-gray-500/45 text-end">
+                <span className="text-foreground text-[10px] px-2 md:text-[14px]">
+                  {item.mediaType}
+                </span>
+              </figcaption>
+            </figure>
+          ))
+        )}
       </div>
 
       {/* View image modal */}
