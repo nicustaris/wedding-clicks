@@ -56,6 +56,17 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
     },
   ] as const;
 
+  const filteredMedia = media.filter((item) => {
+    switch (activeTab) {
+      case "videos":
+        return item.mediaType.startsWith("video/");
+      case "favorites":
+        return isFavorite(item.id);
+      default:
+        return true;
+    }
+  });
+
   return (
     <section className={cn("bg-white text-background p-1.5", className)}>
       <div className="flex justify-evenly p-2 border-b border-gray-200">
@@ -95,7 +106,7 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
                 className="w-full h-full aspect-square bg-gray-200 mt-0.5 animate-pulse"
               />
             ))
-          : media.map((item, index) => (
+          : filteredMedia.map((item, index) => (
               <figure
                 key={item.id}
                 className="flex relative w-full aspect-square cursor-pointer"
@@ -105,14 +116,25 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
                 }}
               >
                 {item.mediaType.startsWith("video/") ? (
-                  <>
+                  <div className="flex relative w-full h-full cursor-pointer">
                     <video
-                      playsInline
                       preload="metadata"
                       src={`${item.imageUrl}#t=0.001`}
                       className="w-full h-full object-cover rounded-sm overflow-y-hidden pointer-events-none"
                     />
-                  </>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="bg-black/50 rounded-full p-2">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-6 w-6 text-white"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
                 ) : (
                   <>
                     <Image
@@ -132,10 +154,10 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
                   className="absolute top-0 right-0 p-1.5"
                 >
                   <GoHeartFill
-                    size={20}
+                    size={22}
                     className={cn(
                       "transition-all duration-300",
-                      isFavorite(item.id) ? "text-red-500" : "text-gray-100"
+                      isFavorite(item.id) ? "text-red-500" : "text-white/90"
                     )}
                   />
                 </span>
