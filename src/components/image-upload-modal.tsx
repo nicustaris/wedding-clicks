@@ -14,10 +14,14 @@ import z from "zod";
 import { useParams } from "next/navigation";
 import { useMediaStore } from "@/store/media";
 import { CloudDownload } from "lucide-react";
+import { RiCloseFill } from "react-icons/ri";
+
 import Image from "next/image";
 import { useUploadThing } from "@/lib/uploadthing";
 
 import { toast } from "sonner";
+import { generateVideoPoster } from "@/utils/videoThumbnail";
+import ItemPreviewModal from "./item-preview-modal";
 
 interface Props {
   open: boolean;
@@ -38,9 +42,9 @@ const uploadSchema = z.object({
 type uploadValues = z.infer<typeof uploadSchema>;
 
 const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
-  const [preview, setPreview] = useState<{ url: string; type: string }[] | []>(
-    []
-  );
+  const [preview, setPreview] = useState<
+    { url: string; type: "image" | "video" }[]
+  >([]);
   const [progress, setProgress] = useState<number>(0);
 
   const { eventId } = useParams();
@@ -68,11 +72,11 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
   const files = watch("files");
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: (currentFiles) => {
+    onDrop: async (currentFiles) => {
       const validFiles: File[] = [];
 
-      currentFiles.forEach((file) => {
-        const maxSize = file.type.startsWith("image")
+      for (const file of currentFiles) {
+        const maxSize = file.type.startsWith("image/")
           ? 8 * 1024 * 1024
           : 1 * 1024 * 1024 * 1024;
 
@@ -83,15 +87,24 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
             description: `${file.name}`,
           });
         }
-      });
+      }
 
-      setPreview((prev) => [
-        ...prev,
-        ...validFiles.map((file) => ({
-          url: URL.createObjectURL(file),
-          type: file.type.split("/")[0],
-        })),
-      ]);
+      const newPreview: typeof preview = [];
+
+      for (const file of validFiles) {
+        if (file.type.startsWith("video/")) {
+          const thumbnail = await generateVideoPoster(file);
+          newPreview.push({
+            url: thumbnail,
+            type: "video",
+          });
+        } else {
+          newPreview.push({ url: URL.createObjectURL(file), type: "image" });
+        }
+      }
+
+      setPreview((prev) => [...prev, ...newPreview]);
+
       setValue("files", [...files, ...validFiles], {
         shouldValidate: true,
       });
@@ -145,9 +158,14 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
       console.log(error);
     }
   };
+
+  console.log("FILES>>>", files);
+
+  const handleItemRemove = () => {};
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent
+        onOpenAutoFocus={(e) => e.preventDefault()}
         className={cn(
           "w-full max-w-2xl bg-foreground text-background",
           className
@@ -181,7 +199,7 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
             }`}
           >
             {files.length === 0 ? (
-              <div className="flex flex-col justify-center items-center gap-2">
+              <div className="flex flex-col w-full justify-center items-center gap-2 p-2">
                 <CloudDownload />
                 <p className="text-center">
                   Drag and drop or click to select files
@@ -190,30 +208,23 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
             ) : (
               <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 overflow-y-auto max-h-60">
                 {preview.map((item, index) => (
-                  <figure
-                    key={index}
-                    className="relative w-full h-24 aspect-square cursor-pointer"
-                  >
-                    {item.type.startsWith("video/") ? (
-                      <video
-                        playsInline
-                        controls
-                        src={item.url}
-                        poster={item.url}
-                        className="w-full h-24 object-cover"
-                      />
-                    ) : (
-                      <Image
-                        src={item.url}
-                        fill
-                        alt=""
-                        className="object-cover object-center rounded"
-                      />
-                    )}
-                  </figure>
+                  <ItemPreviewModal
+                    key={item.url}
+                    url={item.url}
+                    type={item.type}
+                    onRemove={() => {
+                      setPreview((prev) => prev.filter((_, i) => i !== index));
+                      setValue(
+                        "files",
+                        files.filter((_file: File, i: number) => i !== index),
+                        { shouldValidate: true }
+                      );
+                    }}
+                  />
                 ))}
               </div>
             )}
+
             <input {...getInputProps()} />
 
             {errors.files && (
