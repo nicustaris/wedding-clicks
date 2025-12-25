@@ -27,20 +27,7 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    const totalParticipants = await prisma.sessionRecord.findMany({
-      where: {
-        eventId: Number(eventId),
-      },
-      include: {
-        media: true,
-      },
-      distinct: ["name"],
-    });
-
-    return NextResponse.json({
-      media,
-      totalParticipants: totalParticipants.length,
-    });
+    return NextResponse.json(media);
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch media", status: 400 });
   }

@@ -1,7 +1,7 @@
 import { Api } from "@/services/api-client";
 import { create } from "zustand";
 import { SessionWithMedia } from "../../@types/prisma";
-import { Media } from "../../@types/media";
+import { Media } from "@prisma/client";
 
 interface MediaStore {
   media: Media[];
@@ -23,11 +23,12 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
     try {
       set({ loading: true, error: null });
 
-      const data = await Api.media.getAll(eventId);
+      const media = await Api.media.getMedia(eventId);
+      const participants = await Api.media.getTotalParticipants(eventId);
       set({
-        media: data.media ?? [],
-        totalMedia: data.media.length,
-        totalParticipants: data.totalParticipants,
+        media: media ?? [],
+        totalMedia: media.length ?? 0,
+        totalParticipants: participants ?? 0,
         loading: false,
         error: null,
       });

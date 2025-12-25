@@ -14,14 +14,13 @@ import z from "zod";
 import { useParams } from "next/navigation";
 import { useMediaStore } from "@/store/media";
 import { CloudDownload } from "lucide-react";
-import { RiCloseFill } from "react-icons/ri";
 
-import Image from "next/image";
 import { useUploadThing } from "@/lib/uploadthing";
 
 import { toast } from "sonner";
 import { generateVideoPoster } from "@/utils/videoThumbnail";
 import ItemPreviewModal from "./item-preview-modal";
+import { Media } from "@prisma/client";
 
 interface Props {
   open: boolean;
@@ -127,11 +126,14 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
   });
 
   const { startUpload, isUploading } = useUploadThing("mediaUploader", {
-    onClientUploadComplete: () => {
+    onClientUploadComplete: (files) => {
       reset();
       setPreview([]);
       setProgress(0);
       handleClose();
+
+      // Update the state once upload is done.
+      fetchMedia(Number(eventId));
     },
     onUploadProgress: setProgress,
   });
@@ -151,7 +153,6 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
         message: data.message || "",
         eventId: Number(eventId),
       });
-      // TODO: Update the state after upload
       //
       //
     } catch (error) {
@@ -159,9 +160,6 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
     }
   };
 
-  console.log("FILES>>>", files);
-
-  const handleItemRemove = () => {};
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent
