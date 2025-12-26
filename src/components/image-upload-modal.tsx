@@ -47,7 +47,7 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
   const [progress, setProgress] = useState<number>(0);
 
   const { eventId } = useParams();
-  const { fetchMedia } = useMediaStore();
+  const { updateMedia } = useMediaStore();
 
   const form = useForm({
     resolver: zodResolver(uploadSchema),
@@ -133,7 +133,8 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
       handleClose();
 
       // Update the state once upload is done.
-      fetchMedia(Number(eventId));
+      const newMedia = files.map((f) => f.serverData);
+      updateMedia(newMedia);
     },
     onUploadProgress: setProgress,
   });

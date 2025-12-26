@@ -1,15 +1,15 @@
 import { Api } from "@/services/api-client";
 import { create } from "zustand";
-import { SessionWithMedia } from "../../@types/prisma";
-import { Media } from "@prisma/client";
+import { MediaDTO } from "../../@types/media";
 
 interface MediaStore {
-  media: Media[];
+  media: MediaDTO[];
   totalParticipants: number;
   totalMedia: number;
   loading: boolean;
   error: string | null;
   fetchMedia: (eventId: number) => Promise<void>;
+  updateMedia: (items: MediaDTO[]) => void;
 }
 
 export const useMediaStore = create<MediaStore>((set, get) => ({
@@ -35,5 +35,11 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
     } catch (error: any) {
       set({ loading: false, error: error?.message || "Failed to fetch media" });
     }
+  },
+
+  updateMedia: async (items: MediaDTO[]) => {
+    set((state) => ({
+      media: [...items, ...state.media],
+    }));
   },
 }));

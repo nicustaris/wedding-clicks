@@ -43,17 +43,12 @@ export const ourFileRouter = {
           imageUrl: file.ufsUrl,
           mediaType: file.type || "image",
         },
-        include: {
-          sessionRecord: true,
-        },
       });
       return {
         id: media.id,
+        sessionId: media.sessionId,
         imageUrl: media.imageUrl,
         mediaType: media.mediaType,
-        createdAt: media.createdAt.toISOString(),
-        updatedAtCustom: media.createdAt.toISOString(),
-        sessionName: media.sessionRecord?.name ?? null,
       };
     }),
 } satisfies FileRouter;
