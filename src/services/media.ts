@@ -1,5 +1,4 @@
 import { Media } from "@prisma/client";
-import { MediaWithParticipants } from "../../@types/media";
 import { ApiRoutes } from "./constants";
 import { axiosInstance } from "./instance";
 
