@@ -24,7 +24,10 @@ const ImageViewModal: React.FC<Props> = ({
   setCurrentIndex,
   onClose,
 }) => {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
+    startIndex: currentIndex ?? 0,
+  });
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -40,7 +43,7 @@ const ImageViewModal: React.FC<Props> = ({
     return () => {
       emblaApi.off("select", onSelect);
     };
-  }, [emblaApi, currentIndex, mediaList, setCurrentIndex]);
+  }, [emblaApi, mediaList]);
 
   const handleDownload = async () => {
     if (currentIndex === null) return;
@@ -65,9 +68,8 @@ const ImageViewModal: React.FC<Props> = ({
     }
 
     const fileName = generateRandomFileName(extension);
-    const test = "test";
     try {
-      const response = await fetch(test);
+      const response = await fetch(url);
       const blob = await response.blob();
 
       const blobUrl = URL.createObjectURL(blob);
