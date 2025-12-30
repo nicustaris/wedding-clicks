@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 export function useFavorites(eventId: number) {
-  const storageKey = `favorites-event-${eventId}`;
+  const storageKey = `weddino-event-${eventId}`;
 
   const [favorites, setFavorites] = useState<number[]>([]);
 

@@ -31,20 +31,6 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
     fetchMedia(eventId);
   }, [eventId]);
 
-  const handlePrev = () => {
-    setCurrentIndex((prev) =>
-      prev !== null
-        ? (prev - 1 + filteredMedia.length) % filteredMedia.length
-        : 0
-    );
-  };
-
-  const handleNext = () => {
-    setCurrentIndex((prev) =>
-      prev !== null ? (prev + 1) % filteredMedia.length : 0
-    );
-  };
-
   const tabs = [
     {
       id: "gallery",
@@ -193,10 +179,10 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
       {openImageModal && currentIndex !== null && (
         <ImageViewModal
           open={openImageModal}
+          mediaList={filteredMedia}
+          currentIndex={currentIndex}
+          setCurrentIndex={setCurrentIndex}
           onClose={() => setOpenImageModal(false)}
-          selectedMedia={filteredMedia[currentIndex]}
-          onPrev={handlePrev}
-          onNext={handleNext}
         />
       )}
     </section>
