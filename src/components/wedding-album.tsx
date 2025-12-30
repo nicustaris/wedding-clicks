@@ -182,6 +182,8 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
           mediaList={filteredMedia}
           currentIndex={currentIndex}
           setCurrentIndex={setCurrentIndex}
+          toggleFavorite={toggleFavorite}
+          isFavorite={isFavorite}
           onClose={() => setOpenImageModal(false)}
         />
       )}

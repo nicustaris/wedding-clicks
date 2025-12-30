@@ -4,15 +4,19 @@ import useEmblaCarousel from "embla-carousel-react";
 import Image from "next/image";
 import { MediaDTO } from "../../@types/media";
 import { MdOutlineClose, MdOutlineFileDownload } from "react-icons/md";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaHeart } from "react-icons/fa";
 import { generateRandomFileName } from "@/lib/generateRandomFileName";
 import { toast } from "sonner";
+import { FaRegHeart } from "react-icons/fa";
+import { cn } from "@/lib/utils";
 
 interface Props {
   open: boolean;
   mediaList: MediaDTO[];
   currentIndex: number;
   setCurrentIndex: (i: number) => void;
+  toggleFavorite: (itemId: number) => void;
+  isFavorite: (itemId: number) => boolean;
   onClose: () => void;
   className?: string;
 }
@@ -22,6 +26,8 @@ const ImageViewModal: React.FC<Props> = ({
   mediaList,
   currentIndex,
   setCurrentIndex,
+  toggleFavorite,
+  isFavorite,
   onClose,
 }) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -29,6 +35,22 @@ const ImageViewModal: React.FC<Props> = ({
     startIndex: currentIndex ?? 0,
   });
 
+  const currentMedia = mediaList[currentIndex];
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (open) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
+
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  }, [open]);
+
+  // Sync carousel and currentIndex
   useEffect(() => {
     if (!emblaApi) return;
     emblaApi.reInit();
@@ -126,6 +148,21 @@ const ImageViewModal: React.FC<Props> = ({
         className="absolute top-1/2 -translate-y-1/2 right-2 bg-[#2727275e] p-2.5 rounded-full z-20 cursor-pointer"
       >
         <FaChevronRight size={20} className="text-white" />
+      </button>
+
+      <button
+        onClick={() => {
+          if (!currentMedia) return;
+          toggleFavorite(currentMedia.id);
+        }}
+        className="flex items-center justify-center gap-2 absolute bottom-2 right-2 bg-[#2727275e] px-3 py-1.5 rounded-full cursor-pointer z-20"
+      >
+        {isFavorite(currentMedia.id) ? (
+          <FaHeart className="text-red-500" size={21} />
+        ) : (
+          <FaRegHeart className="text-white" size={21} />
+        )}
+        <span className={"text-white text-sm"}>Favorite</span>
       </button>
 
       <div className="overflow-hidden" ref={emblaRef}>
