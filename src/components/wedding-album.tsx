@@ -94,7 +94,7 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
           );
         })}
       </div>
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-10 gap-1.5 mt-3">
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-10 gap-1 mt-3">
         {loading ? (
           Array.from({ length: 12 }, (_, i) => (
             <Skeleton
