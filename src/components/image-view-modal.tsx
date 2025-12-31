@@ -9,6 +9,7 @@ import { generateRandomFileName } from "@/lib/generateRandomFileName";
 import { toast } from "sonner";
 import { FaRegHeart } from "react-icons/fa";
 import { cn } from "@/lib/utils";
+import { GoHeartFill } from "react-icons/go";
 
 interface Props {
   open: boolean;
@@ -157,11 +158,13 @@ const ImageViewModal: React.FC<Props> = ({
         }}
         className="flex items-center justify-center gap-2 absolute bottom-2 right-2 bg-[#2727275e] px-3 py-1.5 rounded-full cursor-pointer z-20"
       >
-        {isFavorite(currentMedia.id) ? (
-          <FaHeart className="text-red-500" size={21} />
-        ) : (
-          <FaRegHeart className="text-white" size={21} />
-        )}
+        <GoHeartFill
+          size={21}
+          className={cn(
+            "transition-all duration-300",
+            isFavorite(currentMedia.id) ? "text-red-500" : "text-white"
+          )}
+        />
         <span className={"text-white text-sm"}>Favorite</span>
       </button>
 
