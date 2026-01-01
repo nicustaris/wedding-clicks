@@ -193,7 +193,7 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
           )}
           <div
             {...getRootProps()}
-            className={`flex justify-start border border-dashed border-b-gray-300 rounded-md text-gray-500 text-sm p-2 ${
+            className={`block justify-start border border-dashed border-b-gray-300 rounded-md text-gray-500 text-sm p-2 ${
               isDragActive ? "bg-blue-500 text-white" : "bg-white"
             }`}
           >
@@ -205,7 +205,7 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 overflow-y-auto max-h-60">
+              <div className="grid w-full grid-cols-[repeat(auto-fill,minmax(90px,1fr))] gap-2 overflow-y-auto max-h-60">
                 {preview.map((item, index) => (
                   <ItemPreviewModal
                     key={item.url}

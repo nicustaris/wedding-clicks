@@ -16,17 +16,14 @@ const ItemPreviewModal: React.FC<PreviewItemProps> = ({
   onRemove,
 }) => {
   return (
-    <figure
-      key={url}
-      className="relative w-full h-22 aspect-square cursor-pointer"
-    >
+    <figure key={url} className="relative w-full aspect-square cursor-pointer">
       <button
         onClick={(e) => {
           e.stopPropagation();
           onRemove();
         }}
         type="button"
-        className="absolute top-1 right-1 z-20 bg-black/50 hover:bg-black p-0.5 rounded-full pointer-events-auto"
+        className="absolute top-1 right-1 z-20 bg-[#2727275e] hover:bg-black/60 p-1 rounded-full pointer-events-auto animation-all duration-300"
       >
         <RiCloseFill className="text-white" />
       </button>
@@ -57,8 +54,8 @@ const ItemPreviewModal: React.FC<PreviewItemProps> = ({
       ) : (
         <Image
           src={url}
-          fill
           alt=""
+          fill
           className="object-cover object-center rounded"
         />
       )}
