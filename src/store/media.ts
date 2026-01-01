@@ -40,7 +40,9 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
   updateMedia: async (items: MediaDTO[], eventId: number) => {
     set((state) => {
       const existingIds = new Set(state.media.map((m) => m.id));
-      const filtered = items.filter((i) => !existingIds.has(i.id));
+      const filtered = items
+        .filter((i) => !existingIds.has(i.id))
+        .sort((a, b) => b.id - a.id);
       return {
         media: [...filtered, ...state.media],
         totalMedia: state.totalMedia + filtered.length,

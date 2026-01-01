@@ -167,7 +167,7 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
 
               <figcaption className="w-full absolute bottom-0 right-0 bg-gray-500/45 text-end">
                 <span className="text-foreground text-[10px] px-2 md:text-[14px]">
-                  {item.mediaType}
+                  {item.id}
                 </span>
               </figcaption>
             </figure>

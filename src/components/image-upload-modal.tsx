@@ -20,7 +20,6 @@ import { useUploadThing } from "@/lib/uploadthing";
 import { toast } from "sonner";
 import { generateVideoPoster } from "@/utils/videoThumbnail";
 import ItemPreviewModal from "./item-preview-modal";
-import { Media } from "@prisma/client";
 
 interface Props {
   open: boolean;
