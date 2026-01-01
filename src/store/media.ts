@@ -9,7 +9,7 @@ interface MediaStore {
   loading: boolean;
   error: string | null;
   fetchMedia: (eventId: number) => Promise<void>;
-  updateMedia: (items: MediaDTO[]) => void;
+  updateMedia: (items: MediaDTO[], eventId: number) => void;
 }
 
 export const useMediaStore = create<MediaStore>((set, get) => ({
@@ -37,9 +37,21 @@ export const useMediaStore = create<MediaStore>((set, get) => ({
     }
   },
 
-  updateMedia: async (items: MediaDTO[]) => {
-    set((state) => ({
-      media: [...items, ...state.media],
-    }));
+  updateMedia: async (items: MediaDTO[], eventId: number) => {
+    set((state) => {
+      const existingIds = new Set(state.media.map((m) => m.id));
+      const filtered = items.filter((i) => !existingIds.has(i.id));
+      return {
+        media: [...filtered, ...state.media],
+        totalMedia: state.totalMedia + filtered.length,
+      };
+    });
+
+    try {
+      const participants = await Api.media.getTotalParticipants(eventId);
+      set({ totalParticipants: participants ?? 0 });
+    } catch (error) {
+      console.log(error);
+    }
   },
 }));

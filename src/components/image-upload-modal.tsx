@@ -134,7 +134,7 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
 
       // Update the state once upload is done.
       const newMedia = files.map((f) => f.serverData);
-      updateMedia(newMedia);
+      updateMedia(newMedia, Number(eventId));
     },
     onUploadProgress: setProgress,
   });
