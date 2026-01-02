@@ -1,42 +1,30 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 interface WelcomeModalProps {
-  className?: string;
   isWelcomeModalOpen: boolean;
 }
 
-export default function WelcomeModal({
-  isWelcomeModalOpen,
-}: WelcomeModalProps) {
+export default function WelcomeModal(isWelcomeModalOpen: WelcomeModalProps) {
   return (
-    <Dialog open={true} onOpenChange={() => {}}>
-      <DialogContent className="fixed flex flex-col translate-y-0!">
-        <DialogHeader>
-          <DialogTitle className="text-center text-lg font-semibold">
-            Welcome! What’s your name?
-          </DialogTitle>
-          <DialogDescription className="text-center text-sm text-gray-600 mb-4">
+    <div className="fixed inset-0">
+      <div className="fixed w-full h-[200px] bottom-0 left-0 right-0">
+        <div className="flex flex-col relative items-center h-full space-y-4 bg-black/90">
+          <h2 className="text-secondary text-xl mt-3">
+            Welcome! <span className="text-white">What's your name?</span>
+          </h2>
+          <span className="text-gray-400 text-sm">
             Please enter your name so we can personalize your experience.
-          </DialogDescription>
-        </DialogHeader>
-
-        <input
-          type="text"
-          placeholder="Enter your name"
-          className="w-full p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-primary"
-        />
-
-        <button className="w-full bg-primary text-white p-3 rounded-md hover:bg-secondary transition-colors">
-          Save
-        </button>
-      </DialogContent>
-    </Dialog>
+          </span>
+          <Input
+            placeholder="Enter your name"
+            className="placeholder-gray-300! text-white"
+          />
+          <Button variant="outline" className="text-white">
+            Save
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }
