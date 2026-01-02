@@ -12,6 +12,7 @@ import { RiGalleryView2 } from "react-icons/ri";
 import { FaVideo } from "react-icons/fa6";
 import { GoHeartFill } from "react-icons/go";
 import { useFavorites } from "@/hooks/useFavorites";
+import WelcomeModal from "./welcome-modal";
 
 interface Props {
   eventId: number;
@@ -22,6 +23,7 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
   const { media, loading, fetchMedia, error } = useMediaStore();
   const { toggleFavorite, isFavorite } = useFavorites(eventId);
   const [openImageModal, setOpenImageModal] = useState<boolean>(false);
+  const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState<boolean>(true);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<
     "gallery" | "videos" | "favorites"
@@ -187,6 +189,9 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
           onClose={() => setOpenImageModal(false)}
         />
       )}
+
+      {/* Welcome modal */}
+      <WelcomeModal isWelcomeModalOpen={isWelcomeModalOpen} />
     </section>
   );
 };
