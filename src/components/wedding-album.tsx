@@ -23,7 +23,7 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
   const { media, loading, fetchMedia, error } = useMediaStore();
   const { toggleFavorite, isFavorite } = useFavorites(eventId);
   const [openImageModal, setOpenImageModal] = useState<boolean>(false);
-  const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState<boolean>(true);
+  const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<
     "gallery" | "videos" | "favorites"
@@ -32,6 +32,13 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
   useEffect(() => {
     fetchMedia(eventId);
   }, [eventId]);
+
+  useEffect(() => {
+    const guestName = localStorage.getItem("guestName");
+    if (!guestName) {
+      setIsWelcomeModalOpen(true);
+    }
+  }, []);
 
   const tabs = [
     {
@@ -191,7 +198,12 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
       )}
 
       {/* Welcome modal */}
-      <WelcomeModal isWelcomeModalOpen={isWelcomeModalOpen} />
+      {isWelcomeModalOpen && (
+        <WelcomeModal
+          isWelcomeModalOpen={isWelcomeModalOpen}
+          onClose={() => setIsWelcomeModalOpen(false)}
+        />
+      )}
     </section>
   );
 };
