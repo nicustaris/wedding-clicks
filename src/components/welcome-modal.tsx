@@ -41,13 +41,13 @@ export default function WelcomeModal({
 
   if (!isWelcomeModalOpen) return null;
   return (
-    <div onClick={onClose} className="fixed inset-0 bg-black/50">
+    <div onClick={onClose} className="fixed inset-0">
       <div
         onClick={(e) => e.stopPropagation()}
         className="fixed w-full bottom-0 left-0 right-0"
       >
         <div
-          className={`flex flex-col relative items-center h-full py-5 space-y-3 bg-slate-800/98 shadow-xl p-3 rounded-t-sm transform transition-transform duration-1000 ease-out ${
+          className={`flex flex-col relative items-center h-full py-5 space-y-3 bg-black/85 shadow-xl p-3 rounded-t-sm transform transition-transform duration-1000 ease-out ${
             animateIn ? "translate-y-0" : "translate-y-full"
           }`}
         >
