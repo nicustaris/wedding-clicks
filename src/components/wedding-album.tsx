@@ -13,6 +13,7 @@ import { FaVideo } from "react-icons/fa6";
 import { GoHeartFill } from "react-icons/go";
 import { useFavorites } from "@/hooks/useFavorites";
 import WelcomeModal from "./welcome-modal";
+import AnimatedHeart from "./animated-heart";
 
 interface Props {
   eventId: number;
@@ -24,6 +25,7 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
   const { toggleFavorite, isFavorite } = useFavorites(eventId);
   const [openImageModal, setOpenImageModal] = useState<boolean>(false);
   const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState<boolean>(false);
+  const [showHeart, setShowHeart] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<
     "gallery" | "videos" | "favorites"
@@ -74,6 +76,7 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
 
   return (
     <section className={cn("bg-white text-background p-1.5", className)}>
+      <AnimatedHeart trigger={showHeart} onDone={() => setShowHeart} />
       <div className="flex justify-evenly p-2 border-b border-gray-200">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
@@ -162,6 +165,7 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
                 onClick={(e) => {
                   e.stopPropagation();
                   toggleFavorite(item.id);
+                  setShowHeart(true);
                 }}
                 className="absolute top-0 right-0 p-1.5"
               >
