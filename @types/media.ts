@@ -1,6 +1,8 @@
 export interface MediaDTO {
   id: number;
   sessionId: number;
-  imageUrl: string;
+  url: string;
+  optimizedUrl: string;
+  thumbnailUrl: string;
   mediaType: string;
 }

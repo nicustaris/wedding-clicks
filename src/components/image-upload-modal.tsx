@@ -91,9 +91,9 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
 
       for (const file of validFiles) {
         if (file.type.startsWith("video/")) {
-          const thumbnail = await generateVideoPoster(file);
+          const poster = await generateVideoPoster(file);
           newPreview.push({
-            url: thumbnail,
+            url: poster,
             type: "video",
           });
         } else {
@@ -133,6 +133,7 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
 
       // Update the state once upload is done.
       const newMedia = files.map((f) => f.serverData);
+      console.log(newMedia, "newMedia");
       updateMedia(newMedia, Number(eventId));
     },
     onUploadProgress: setProgress,
@@ -153,8 +154,7 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
         message: data.message || "",
         eventId: Number(eventId),
       });
-      //
-      //
+      console.log("check how many times startUpload run");
     } catch (error) {
       console.log(error);
     }

@@ -75,7 +75,7 @@ const ImageViewModal: React.FC<Props> = ({
     if (!media) return;
 
     // TODO: Make another lib/utils that will handle video format and file name
-    const url = media.imageUrl;
+    const url = media.url;
     let extension = "file";
 
     if (media.mediaType.startsWith("image/")) {
@@ -177,7 +177,7 @@ const ImageViewModal: React.FC<Props> = ({
             >
               {media.mediaType.startsWith("video/") ? (
                 <video
-                  src={media.imageUrl}
+                  src={media.url}
                   controls
                   autoPlay
                   playsInline
@@ -185,7 +185,7 @@ const ImageViewModal: React.FC<Props> = ({
                 />
               ) : (
                 <Image
-                  src={media.imageUrl}
+                  src={media.optimizedUrl}
                   alt={media.mediaType}
                   width={800}
                   height={600}

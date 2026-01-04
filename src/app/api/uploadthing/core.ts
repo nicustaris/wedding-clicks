@@ -1,8 +1,14 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
+import { UTApi, UTFile } from "uploadthing/server";
 import z from "zod";
 import { prisma } from "../../../../prisma/prisma-client";
+import { generateImageVariants } from "@/lib/generateImageVariants";
+import { uploadVariants } from "@/lib/uploadVariants";
 
 const f = createUploadthing();
+export const utapi = new UTApi({
+  token: process.env.UPLOADTHING_SCRET,
+});
 
 export const ourFileRouter = {
   mediaUploader: f({
@@ -36,18 +42,37 @@ export const ourFileRouter = {
       }
     })
     .onUploadComplete(async ({ file, metadata }) => {
-      // TODO: In the future upload thumbnail for photos to optimise UI
+      // Fallback to original file
+      let optimizedUrl = file.ufsUrl;
+      let thumbnailUrl = file.ufsUrl;
+
+      // Generate reduced image for UI optisimation
+      if (file.type.startsWith("image/")) {
+        // Download original file from UploadThing URL
+        const response = await fetch(file.ufsUrl);
+        const buffer = Buffer.from(await response.arrayBuffer());
+        const variants = await generateImageVariants(buffer);
+        const urls = await uploadVariants(utapi, file.key, variants);
+        optimizedUrl = urls.optimized ?? optimizedUrl;
+        thumbnailUrl = urls.thumbnail ?? thumbnailUrl;
+      }
+
+      // Save media record in DB
       const media = await prisma.media.create({
         data: {
           sessionId: metadata.sessionId,
-          imageUrl: file.ufsUrl,
+          url: file.ufsUrl,
+          optimizedUrl: optimizedUrl,
+          thumbnailUrl: thumbnailUrl,
           mediaType: file.type || "image",
         },
       });
       return {
         id: media.id,
         sessionId: media.sessionId,
-        imageUrl: media.imageUrl,
+        url: media.url,
+        optimizedUrl: media.optimizedUrl,
+        thumbnailUrl: media.thumbnailUrl,
         mediaType: media.mediaType,
       };
     }),

@@ -131,7 +131,7 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
                 <div className="flex relative w-full h-full cursor-pointer">
                   <video
                     preload="metadata"
-                    src={`${item.imageUrl}#t=0.001`}
+                    src={`${item.url}#t=0.001`}
                     className="w-full h-full object-cover rounded-sm overflow-y-hidden pointer-events-none"
                   />
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -150,7 +150,7 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
               ) : (
                 <>
                   <Image
-                    src={item.imageUrl}
+                    src={item.thumbnailUrl}
                     alt={item.mediaType || "Image"}
                     className="w-full object-cover object-center rounded-md"
                     fill

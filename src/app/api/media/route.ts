@@ -19,7 +19,9 @@ export async function GET(req: NextRequest) {
       select: {
         id: true,
         sessionId: true,
-        imageUrl: true,
+        url: true,
+        optimizedUrl: true,
+        thumbnailUrl: true,
         mediaType: true,
       },
       orderBy: {
