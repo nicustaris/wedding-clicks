@@ -141,5 +141,5 @@ body {
 }
 
 .animate-heart-pop {
-  animation: heart-pop 0.8s ease forwards;
+  animation: heart-pop 0.6s ease forwards;
 }

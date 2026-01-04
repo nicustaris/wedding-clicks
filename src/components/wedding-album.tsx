@@ -76,7 +76,7 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
 
   return (
     <section className={cn("bg-white text-background p-1.5", className)}>
-      <AnimatedHeart trigger={showHeart} onDone={() => setShowHeart} />
+      <AnimatedHeart trigger={showHeart} onDone={() => setShowHeart(false)} />
       <div className="flex justify-evenly p-2 border-b border-gray-200">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
@@ -164,8 +164,11 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
               <span
                 onClick={(e) => {
                   e.stopPropagation();
+                  const alreadyFavorite = isFavorite(item.id);
                   toggleFavorite(item.id);
-                  setShowHeart(true);
+                  if (!alreadyFavorite) {
+                    setShowHeart(true);
+                  }
                 }}
                 className="absolute top-0 right-0 p-1.5"
               >

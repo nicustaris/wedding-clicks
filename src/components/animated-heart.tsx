@@ -16,7 +16,7 @@ const AnimatedHeart: React.FC<AnimateProps> = ({ trigger, onDone }) => {
       const timer = setTimeout(() => {
         setShow(false);
         onDone();
-      }, 800);
+      }, 600);
       return () => clearTimeout(timer);
     }
   }, [trigger, onDone]);
