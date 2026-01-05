@@ -16,7 +16,7 @@ const AnimatedHeart: React.FC<AnimateProps> = ({ trigger, onDone }) => {
       const timer = setTimeout(() => {
         setShow(false);
         onDone();
-      }, 600);
+      }, 800);
       return () => clearTimeout(timer);
     }
   }, [trigger, onDone]);
@@ -24,7 +24,7 @@ const AnimatedHeart: React.FC<AnimateProps> = ({ trigger, onDone }) => {
   if (!show) return null;
   return (
     <div className="fixed inset-0 flex justify-center items-center z-20">
-      <GoHeartFill className="text-red-500 text-6xl animate-heart-pop" />
+      <GoHeartFill className="text-red-500 text-7xl animate-heart-pop" />
     </div>
   );
 };
