@@ -36,6 +36,7 @@ const ImageViewModal: React.FC<Props> = ({
     startIndex: currentIndex ?? 0,
   });
 
+  const prevIndexRef = React.useRef<number | null>(null);
   const currentMedia = mediaList[currentIndex];
 
   // Lock body scroll when modal is open
@@ -55,24 +56,28 @@ const ImageViewModal: React.FC<Props> = ({
   useEffect(() => {
     if (!emblaApi) return;
     emblaApi.reInit();
-
     emblaApi.scrollTo(currentIndex);
 
     const onSelect = () => {
-      // Search if there's a previous video in the background
+      // Current and previous slide indexes
+      const activeIndex = emblaApi.selectedScrollSnap();
+      const prevIndex = prevIndexRef.current;
       const slides = emblaApi.slideNodes();
-      const prevslide = slides[currentIndex];
-      const prevVideoEl = prevslide.querySelector<HTMLVideoElement>("video");
 
-      // If previous element has video, pause it and reset currentTime
-      if (prevVideoEl) {
-        prevVideoEl.pause();
-        prevVideoEl.currentTime = 0;
+      // Stop video on previous slide
+      if (prevIndex !== null && prevIndex !== activeIndex) {
+        const prevVideo =
+          slides[prevIndex]?.querySelector<HTMLVideoElement>("video");
+        if (prevVideo) {
+          console.log("PAUSE VIDEO", prevIndex, activeIndex);
+          prevVideo.pause();
+          prevVideo.currentTime = 0;
+          prevVideo.load();
+        }
       }
 
-      // State update
-      const activeIndex = emblaApi.selectedScrollSnap();
-      setCurrentIndex(activeIndex);
+      setCurrentIndex(activeIndex); // Update currentIndex state
+      prevIndexRef.current = activeIndex; // Update previous index ref
     };
     emblaApi.on("select", onSelect);
 
@@ -190,7 +195,7 @@ const ImageViewModal: React.FC<Props> = ({
             >
               {media.mediaType.startsWith("video/") ? (
                 <video
-                  data-video
+                  data-video={index}
                   src={media.url}
                   controls
                   playsInline

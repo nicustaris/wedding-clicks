@@ -154,7 +154,6 @@ const ImageUploadModal: React.FC<Props> = ({ open, onClose, className }) => {
         message: data.message || "",
         eventId: Number(eventId),
       });
-      console.log("check how many times startUpload run");
     } catch (error) {
       console.log(error);
     }

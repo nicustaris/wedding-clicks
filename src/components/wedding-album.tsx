@@ -36,8 +36,6 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
     fetchMedia(eventId);
   }, [eventId, fetchMedia]);
 
-  console.log("ONE RENDER >>>>>>>>>");
-
   useEffect(() => {
     if (!localStorage.getItem("guestName")) setIsWelcomeModalOpen(true);
   }, []);

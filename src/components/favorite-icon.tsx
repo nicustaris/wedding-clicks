@@ -15,8 +15,6 @@ const FavoriteIcon = React.memo(function FavoriteIcon({
   toggleFavorite,
   onAnimate,
 }: FavoriteIconProps) {
-  console.log("rerender icon heart");
-
   const favorite = isFavorite(mediaId);
 
   return (
