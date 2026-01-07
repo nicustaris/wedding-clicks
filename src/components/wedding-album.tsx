@@ -1,6 +1,6 @@
 "use client";
 
-import React, { act, useEffect, useState } from "react";
+import React, { act, useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useMediaStore } from "@/store/media";
@@ -14,6 +14,7 @@ import { GoHeartFill } from "react-icons/go";
 import { useFavorites } from "@/hooks/useFavorites";
 import WelcomeModal from "./welcome-modal";
 import AnimatedHeart from "./animated-heart";
+import FavoriteIcon from "./favorite-icon";
 
 interface Props {
   eventId: number;
@@ -22,7 +23,7 @@ interface Props {
 
 export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
   const { media, loading, fetchMedia, error } = useMediaStore();
-  const { toggleFavorite, isFavorite } = useFavorites(eventId);
+  const favorites = useFavorites(eventId);
   const [openImageModal, setOpenImageModal] = useState<boolean>(false);
   const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState<boolean>(false);
   const [showHeart, setShowHeart] = useState<boolean>(false);
@@ -33,13 +34,12 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
 
   useEffect(() => {
     fetchMedia(eventId);
-  }, [eventId]);
+  }, [eventId, fetchMedia]);
+
+  console.log("ONE RENDER >>>>>>>>>");
 
   useEffect(() => {
-    const guestName = localStorage.getItem("guestName");
-    if (!guestName) {
-      setIsWelcomeModalOpen(true);
-    }
+    if (!localStorage.getItem("guestName")) setIsWelcomeModalOpen(true);
   }, []);
 
   const tabs = [
@@ -57,22 +57,21 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
     },
   ] as const;
 
-  const filteredMedia = media.filter((item) => {
-    switch (activeTab) {
-      case "videos":
-        return item.mediaType.startsWith("video/");
-      case "favorites":
-        return isFavorite(item.id);
-      default:
-        return true;
-    }
-  });
+  const filteredMedia = React.useMemo(() => {
+    return media.filter((item) => {
+      if (activeTab === "videos") return item.mediaType.startsWith("video/");
+      if (activeTab === "favorites") return favorites.isFavorite(item.id);
+      return true;
+    });
+  }, [media, activeTab, favorites.isFavorite]);
 
   const emptyMessages = {
     gallery: "Photos will appear here once they’re uploaded 📸",
     videos: "No videos yet — check back soon 🎥",
     favorites: "You haven’t added any favorites yet ❤️",
   };
+
+  const handleFavoriteAnimate = useCallback(() => setShowHeart(true), []);
 
   return (
     <section className={cn("bg-white text-background p-1.5", className)}>
@@ -158,25 +157,12 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
                 </>
               )}
 
-              <span
-                onClick={(e) => {
-                  e.stopPropagation();
-                  const alreadyFavorite = isFavorite(item.id);
-                  toggleFavorite(item.id);
-                  if (!alreadyFavorite) {
-                    setShowHeart(true);
-                  }
-                }}
-                className="absolute top-0 right-0 p-1.5"
-              >
-                <GoHeartFill
-                  size={22}
-                  className={cn(
-                    "transition-all duration-300",
-                    isFavorite(item.id) ? "text-red-500" : "text-white/90"
-                  )}
-                />
-              </span>
+              <FavoriteIcon
+                mediaId={item.id}
+                isFavorite={favorites.isFavorite}
+                toggleFavorite={favorites.toggleFavorite}
+                onAnimate={handleFavoriteAnimate}
+              />
 
               <figcaption className="w-full absolute bottom-0 right-0 bg-gray-500/45 text-end">
                 <span className="text-foreground text-[10px] px-2 md:text-[14px]">
@@ -195,8 +181,8 @@ export const WeddingAlbum: React.FC<Props> = ({ eventId, className }) => {
           mediaList={filteredMedia}
           currentIndex={currentIndex}
           setCurrentIndex={setCurrentIndex}
-          toggleFavorite={toggleFavorite}
-          isFavorite={isFavorite}
+          toggleFavorite={favorites.toggleFavorite}
+          isFavorite={favorites.isFavorite}
           onClose={() => setOpenImageModal(false)}
         />
       )}

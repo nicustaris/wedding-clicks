@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export function useFavorites(eventId: number) {
   const storageKey = `weddino-event-${eventId}`;
@@ -18,20 +18,20 @@ export function useFavorites(eventId: number) {
     }
   }, [eventId, storageKey]);
 
-  const saveFavorites = (newFavorites: number[]) => {
-    setFavorites(newFavorites);
-    localStorage.setItem(storageKey, JSON.stringify(newFavorites));
-  };
+  const toggleFavorite = useCallback((mediaId: number) => {
+    setFavorites((prev) =>
+      prev.includes(mediaId)
+        ? prev.filter((id) => id !== mediaId)
+        : [...prev, mediaId]
+    );
+  }, []);
 
-  const toggleFavorite = (mediaId: number) => {
-    if (favorites.includes(mediaId)) {
-      saveFavorites(favorites.filter((id) => id !== mediaId));
-    } else {
-      saveFavorites([...favorites, mediaId]);
-    }
-  };
-
-  const isFavorite = (mediaId: number) => favorites.includes(mediaId);
+  const isFavorite = useCallback(
+    (mediaId: number) => {
+      return favorites.includes(mediaId);
+    },
+    [favorites]
+  );
 
   return {
     toggleFavorite,

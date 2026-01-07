@@ -70,7 +70,7 @@ const ImageViewModal: React.FC<Props> = ({
         prevVideoEl.currentTime = 0;
       }
 
-      // Update state
+      // State update
       const activeIndex = emblaApi.selectedScrollSnap();
       setCurrentIndex(activeIndex);
     };
@@ -80,40 +80,6 @@ const ImageViewModal: React.FC<Props> = ({
       emblaApi.off("select", onSelect);
     };
   }, [emblaApi, mediaList]);
-
-  // useEffect(() => {
-  //   if (!emblaApi) return;
-
-  //   const handleVisibility = () => {
-  //     const visible = emblaApi.slidesInView();
-  //     const slides = emblaApi.slideNodes();
-
-  //     slides.forEach((slide, index) => {
-  //       const video = slide.querySelector<HTMLVideoElement>("video");
-  //       if (!video) return;
-
-  //       if (visible.includes(index)) {
-  //         // slide is visible → play
-  //       } else {
-  //         // slide NOT visible → stop
-  //         video.pause();
-  //         video.currentTime = 0;
-  //       }
-  //     });
-  //   };
-
-  //   emblaApi.on("select", handleVisibility);
-  //   emblaApi.on("scroll", handleVisibility);
-  //   emblaApi.on("reInit", handleVisibility);
-
-  //   handleVisibility(); // initial
-
-  //   return () => {
-  //     emblaApi.off("select", handleVisibility);
-  //     emblaApi.off("scroll", handleVisibility);
-  //     emblaApi.off("reInit", handleVisibility);
-  //   };
-  // }, [emblaApi]);
 
   const handleDownload = async () => {
     if (currentIndex === null) return;
@@ -203,7 +169,7 @@ const ImageViewModal: React.FC<Props> = ({
           if (!currentMedia) return;
           toggleFavorite(currentMedia.id);
         }}
-        className="flex items-center justify-center gap-2 absolute bottom-2 right-2 bg-[#2727275e] px-3 py-1.5 rounded-full cursor-pointer z-20"
+        className="flex items-center justify-center gap-2 absolute bottom-3 right-3 bg-[#2727275e] px-3 py-1.5 rounded-full cursor-pointer z-20"
       >
         <GoHeartFill
           size={21}
