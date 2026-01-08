@@ -6,7 +6,6 @@ import { Camera, UsersRound } from "lucide-react";
 
 export const EventStats = () => {
   const { totalParticipants, totalMedia, loading } = useMediaStore();
-  // TODO: Loading state
   return (
     <div className="absolute bottom-6">
       <div className="flex flex-col gap-4">

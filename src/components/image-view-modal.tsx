@@ -92,7 +92,6 @@ const ImageViewModal: React.FC<Props> = ({
     const media = mediaList[currentIndex];
     if (!media) return;
 
-    // TODO: Make another lib/utils that will handle video format and file name
     const url = media.url;
     let extension = "file";
 
@@ -139,32 +138,31 @@ const ImageViewModal: React.FC<Props> = ({
   const handleClose = () => {
     onClose();
   };
-  // TODO: COMMON VARIABLE FOR SAME COLOR USED MULTIPLE TIMES
 
   return (
     <div className="flex fixed inset-0 justify-center items-center bg-black">
       <button
         onClick={handleClose}
-        className="absolute top-4 left-4 bg-[#2727275e] p-2.5 rounded-full z-20 cursor-pointer"
+        className="absolute top-4 left-4 bg-overlay p-2.5 rounded-full z-20 cursor-pointer"
       >
         <MdOutlineClose size={25} className="text-white" />
       </button>
       <button
         onClick={handleDownload}
-        className="absolute top-4 right-4 bg-[#2727275e] p-2.5 rounded-full z-20 cursor-pointer"
+        className="absolute top-4 right-4 bg-overlay p-2.5 rounded-full z-20 cursor-pointer"
       >
         <MdOutlineFileDownload size={25} className="text-white" />
       </button>
 
       <button
         onClick={() => emblaApi && emblaApi.scrollPrev()}
-        className="absolute top-1/2 -translate-y-1/2 left-2 bg-[#2727275e] p-2.5 rounded-full z-20 cursor-pointer"
+        className="absolute top-1/2 -translate-y-1/2 left-2 bg-overlay p-2.5 rounded-full z-20 cursor-pointer"
       >
         <FaChevronLeft size={20} className="text-white" />
       </button>
       <button
         onClick={() => emblaApi && emblaApi.scrollNext()}
-        className="absolute top-1/2 -translate-y-1/2 right-2 bg-[#2727275e] p-2.5 rounded-full z-20 cursor-pointer"
+        className="absolute top-1/2 -translate-y-1/2 right-2 bg-overlay p-2.5 rounded-full z-20 cursor-pointer"
       >
         <FaChevronRight size={20} className="text-white" />
       </button>
@@ -174,7 +172,7 @@ const ImageViewModal: React.FC<Props> = ({
           if (!currentMedia) return;
           toggleFavorite(currentMedia.id);
         }}
-        className="flex items-center justify-center gap-2 absolute bottom-3 right-3 bg-[#2727275e] px-3 py-1.5 rounded-full cursor-pointer z-20"
+        className="flex items-center justify-center gap-2 absolute bottom-3 right-3 bg-overlay px-3 py-1.5 rounded-full cursor-pointer z-20"
       >
         <GoHeartFill
           size={21}
