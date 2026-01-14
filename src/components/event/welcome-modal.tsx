@@ -1,6 +1,6 @@
 import { RiCloseFill } from "react-icons/ri";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import { useEffect, useState } from "react";
 import { toast, Toaster } from "sonner";
 

@@ -1,9 +1,17 @@
-import Image from "next/image";
+import Hero from "@/components/hero";
+import HowItWorks from "@/components/how-it-works";
+
+import { LuMenu } from "react-icons/lu";
+import Header from "@/components/header";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      Hello :)
+    <div className="flex w-full bg-white text-background">
+      <div className="w-full flex flex-col">
+        <Header />
+        <Hero />
+        <HowItWorks />
+      </div>
     </div>
   );
 }

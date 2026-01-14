@@ -4,7 +4,7 @@ import React, { act, useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useMediaStore } from "@/store/media";
-import { Skeleton } from "./ui/skeleton";
+import { Skeleton } from "../ui/skeleton";
 import ImageViewModal from "./image-view-modal";
 
 // React icons

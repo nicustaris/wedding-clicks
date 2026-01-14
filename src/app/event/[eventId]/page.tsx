@@ -2,8 +2,8 @@ export const dynamic = "force-dynamic";
 
 import React from "react";
 
-import { EventStats } from "@/components/event-stats";
-import { WeddingAlbum } from "@/components/wedding-album";
+import { EventStats } from "@/components/event/event-stats";
+import { WeddingAlbum } from "@/components/event/wedding-album";
 
 interface PageParams {
   params: Promise<{ eventId: string }>;
