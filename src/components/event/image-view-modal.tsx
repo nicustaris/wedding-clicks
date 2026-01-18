@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 
 import Image from "next/image";
-import { MediaDTO } from "../../@types/media";
+
 import { MdOutlineClose, MdOutlineFileDownload } from "react-icons/md";
 import { FaChevronLeft, FaChevronRight, FaHeart } from "react-icons/fa";
 import { generateRandomFileName } from "@/lib/generateRandomFileName";
 import { toast } from "sonner";
-import { FaRegHeart } from "react-icons/fa";
 import { cn } from "@/lib/utils";
 import { GoHeartFill } from "react-icons/go";
+import { MediaDTO } from "../../../@types/media";
 
 interface Props {
   open: boolean;
@@ -69,7 +69,6 @@ const ImageViewModal: React.FC<Props> = ({
         const prevVideo =
           slides[prevIndex]?.querySelector<HTMLVideoElement>("video");
         if (prevVideo) {
-          console.log("PAUSE VIDEO", prevIndex, activeIndex);
           prevVideo.pause();
           prevVideo.currentTime = 0;
           prevVideo.load();

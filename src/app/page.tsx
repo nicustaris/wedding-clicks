@@ -1,7 +1,6 @@
 import Hero from "@/components/hero";
 import HowItWorks from "@/components/how-it-works";
 
-import { LuMenu } from "react-icons/lu";
 import Header from "@/components/header";
 
 export default function Home() {

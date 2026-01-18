@@ -1,11 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { LuMenu } from "react-icons/lu";
+import MobileNavigation from "./mobile-navigation";
 
 export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-
   return (
     <>
       <header className="flex w-full justify-between mx-auto max-w-5xl p-5">
@@ -25,11 +22,7 @@ export default function Header() {
         </nav>
 
         {/* Mobile navigation */}
-        <div className="flex items-center sm:hidden">
-          <button onClick={() => setIsMenuOpen(true)}>
-            <LuMenu className="text-xl" />
-          </button>
-        </div>
+        <MobileNavigation />
       </header>
     </>
   );
