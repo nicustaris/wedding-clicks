@@ -20,16 +20,16 @@ export default function MobileNavigation() {
             variant="ghost"
             size="icon"
             aria-label="Open menu"
-            className="rounded-full border border-zinc-200 bg-white shadow-sm hover:bg-zinc-50"
+            className="hover:shadow-sm"
           >
             {/* override shadcn icon sizing */}
-            <Menu className="!h-6 !w-6 text-zinc-900" />
+            <Menu className="h-6! w-6! text-zinc-900" />
           </Button>
         </SheetTrigger>
 
         <SheetContent
           side="left"
-          className="w-80 border-r border-zinc-200dsa bg-white p-0 text-zinc-900"
+          className="w-80 border-r border-zinc-200 bg-white p-0 text-zinc-900"
         >
           <SheetHeader className="border-b border-zinc-200 px-5 py-4">
             <SheetTitle className="sr-only">Navigation menu</SheetTitle>
@@ -53,7 +53,7 @@ export default function MobileNavigation() {
             <div className="my-3 h-px bg-zinc-200" />
 
             <MobileLink href="/pricing" label="Pricing" />
-            <MobileLink href="/signin" label="Sign in" />
+            <MobileLink href="/auth" label="Sign in" />
           </nav>
 
           <div className="mt-auto border-t border-zinc-200 px-5 py-4 text-xs text-zinc-500">

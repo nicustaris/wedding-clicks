@@ -1,5 +1,5 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
-import { UTApi, UTFile } from "uploadthing/server";
+import { UTApi } from "uploadthing/server";
 import z from "zod";
 import { prisma } from "../../../../prisma/prisma-client";
 import { generateImageVariants } from "@/lib/generateImageVariants";

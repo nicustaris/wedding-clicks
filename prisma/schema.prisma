@@ -8,6 +8,26 @@ datasource db {
   directUrl = env("WEDDINGCLICKS_DATABASE_URL_UNPOOLED")
 }
 
+model User{ 
+  id String @id @default(cuid())
+  name String
+  email String @unique
+  password String?
+  picture String?
+  accounts Account[]
+}
+
+model Account {
+  id String @id @default(cuid())
+  userId String
+  provider String
+  providerAccountId String
+  
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([provider, providerAccountId])
+}
+
 model Event {
     id Int @id @default(autoincrement())
     creator String

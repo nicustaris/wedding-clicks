@@ -45,6 +45,12 @@
 
 body {
   font-family: var(--font-lato), Helvetica, sans-serif;
+  background-color: #fff;
+  color: #27272a;
+}
+
+html {
+  scrollbar-gutter: stable;
 }
 
 :root {
